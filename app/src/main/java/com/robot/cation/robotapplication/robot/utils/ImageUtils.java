@@ -595,7 +595,7 @@ public final class ImageUtils {
                     break;
             }
         } catch (IOException e) {
-            e.printStackTrace();
+           LogUtils.w(e);
         }
         return degree;
     }
@@ -1447,7 +1447,7 @@ public final class ImageUtils {
             ret = src.compress(format, 100, os);
             if (recycle && !src.isRecycled()) src.recycle();
         } catch (IOException e) {
-            e.printStackTrace();
+            LogUtils.w(e);
         } finally {
             CloseUtils.closeIO(os);
         }
@@ -1500,7 +1500,7 @@ public final class ImageUtils {
             is = new FileInputStream(file);
             return getImageType(is);
         } catch (IOException e) {
-            e.printStackTrace();
+           LogUtils.w(e);
             return null;
         } finally {
             CloseUtils.closeIO(is);
@@ -1519,7 +1519,7 @@ public final class ImageUtils {
             byte[] bytes = new byte[8];
             return is.read(bytes, 0, 8) != -1 ? getImageType(bytes) : null;
         } catch (IOException e) {
-            e.printStackTrace();
+            LogUtils.w(e);
             return null;
         }
     }
@@ -1814,7 +1814,7 @@ public final class ImageUtils {
         try {
             return file.createNewFile();
         } catch (IOException e) {
-            e.printStackTrace();
+            LogUtils.w(e);
             return false;
         }
     }
@@ -1865,7 +1865,7 @@ public final class ImageUtils {
             }
             return os.toByteArray();
         } catch (IOException e) {
-            e.printStackTrace();
+            LogUtils.w(e);
             return null;
         } finally {
             CloseUtils.closeIO(is);

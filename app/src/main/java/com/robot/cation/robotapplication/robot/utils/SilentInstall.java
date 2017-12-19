@@ -34,10 +34,9 @@ public class SilentInstall {
             byte[] data = baos.toByteArray();
             result = new String(data);
         } catch (IOException e) {
-            LogUtils.w(e.getLocalizedMessage());
+            LogUtils.w(e);
         } catch (Exception e) {
-            e.printStackTrace();
-            LogUtils.w(e.getLocalizedMessage());
+            LogUtils.w(e);
         } finally {
             CloseUtils.closeIO(errIs, inIs);
             if (process != null) {

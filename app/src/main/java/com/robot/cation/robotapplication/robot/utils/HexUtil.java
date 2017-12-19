@@ -16,7 +16,7 @@ public class HexUtil {
             byte[] temp = new String(soure, 0, soure.length, "GBK").getBytes("UTF-8");
             content = new String(temp);
         } catch (Exception e) {
-            LogUtils.w(e.getLocalizedMessage());
+            LogUtils.w(e);
         }
         return content;
     }
@@ -27,7 +27,7 @@ public class HexUtil {
             byte[] temp = new String(soure, 0, soure.length, "UTF-8").getBytes("GBK");
             content = new String(temp);
         } catch (Exception e) {
-            LogUtils.w(e.getLocalizedMessage());
+            LogUtils.w(e);
         }
         return content;
     }

@@ -56,7 +56,7 @@ public abstract class SerialPortActivity extends Activity {
                         onDataReceived(buffer, size);
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
+                   LogUtils.w(e);
                     return;
                 }
             }
@@ -88,11 +88,11 @@ public abstract class SerialPortActivity extends Activity {
             mReadThread = new ReadThread();
             mReadThread.start();
         } catch (SecurityException e) {
-            LogUtils.w(e.getLocalizedMessage());
+            LogUtils.w(e);
         } catch (IOException e) {
-            LogUtils.w(e.getLocalizedMessage());
+            LogUtils.w(e);
         } catch (InvalidParameterException e) {
-            LogUtils.w(e.getLocalizedMessage());
+            LogUtils.w(e);
         }
     }
 

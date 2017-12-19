@@ -46,7 +46,7 @@ public final class CrashUtils {
                 versionCode = pi.versionCode;
             }
         } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
+            LogUtils.w(e);
         }
 
         CRASH_HEAD = "************* Crash Log Head ****************" +
@@ -89,7 +89,7 @@ public final class CrashUtils {
                                 cause = cause.getCause();
                             }
                         } catch (IOException e) {
-                            e.printStackTrace();
+                           LogUtils.w(e);
                         } finally {
                             if (pw != null) {
                                 pw.close();
@@ -154,7 +154,7 @@ public final class CrashUtils {
         try {
             return file.createNewFile();
         } catch (IOException e) {
-            e.printStackTrace();
+            LogUtils.w(e);
             return false;
         }
     }

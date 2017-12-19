@@ -30,7 +30,7 @@ public class HttpUtils {
                     callBack.onSuccess(response.body().string());
                 } catch (Exception e) {
                     callBack.onError("请求失败");
-                    LogUtils.w(e.getLocalizedMessage());
+                    LogUtils.w(e);
                 }
             }
         }.start();
@@ -52,7 +52,7 @@ public class HttpUtils {
                     callBack.onSuccess(response.body().string());
                 } catch (Exception e) {
                     callBack.onError("请求失败");
-                    LogUtils.w(e.getLocalizedMessage());
+                    LogUtils.w(e);
                 }
             }
         }.start();

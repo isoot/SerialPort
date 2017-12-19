@@ -44,7 +44,7 @@ public class DownloadUtil {
             @Override
             public void onFailure(Call call, IOException e) {
                 // 下载失败
-                LogUtils.w(e.getLocalizedMessage());
+                LogUtils.w(e);
                 listener.onDownloadFailed();
             }
 
@@ -72,7 +72,7 @@ public class DownloadUtil {
                     // 下载完成
                     listener.onDownloadSuccess(file.getAbsolutePath());
                 } catch (Exception e) {
-                    LogUtils.w(e.getLocalizedMessage());
+                    LogUtils.w(e);
                     listener.onDownloadFailed();
                 } finally {
                     CloseUtils.closeIO(is, fos);

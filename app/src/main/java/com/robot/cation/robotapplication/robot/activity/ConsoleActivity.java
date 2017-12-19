@@ -29,6 +29,7 @@ public class ConsoleActivity extends SerialPortActivity {
 
     EditText mReception;
     EditText Emission;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,17 +38,17 @@ public class ConsoleActivity extends SerialPortActivity {
         //		setTitle("Loopback test");
         mReception = (EditText) findViewById(R.id.EditTextReception);
 
-        Emission= (EditText) findViewById(R.id.EditTextEmission);
+        Emission = (EditText) findViewById(R.id.EditTextEmission);
 
         findViewById(R.id.send).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
-                    LogUtils.w("写内容:" +Emission.getText().toString());
+                    LogUtils.w("写内容:" + Emission.getText().toString());
                     mOutputStream.write(Emission.getText().toString().getBytes());
                     mOutputStream.write('\n');
                 } catch (IOException e) {
-                    LogUtils.w(e.getLocalizedMessage());
+                    LogUtils.w(e);
                 }
             }
         });

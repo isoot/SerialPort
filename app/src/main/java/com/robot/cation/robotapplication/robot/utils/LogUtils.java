@@ -134,6 +134,10 @@ public final class LogUtils {
         log(W, sGlobalTag, contents);
     }
 
+    public static void w(final Throwable e) {
+        log(W, sGlobalTag, e);
+    }
+
     public static void wTag(final String tag, final Object... contents) {
         log(W, tag, contents);
     }
@@ -279,7 +283,23 @@ public final class LogUtils {
         if (contents != null) {
             if (contents.length == 1) {
                 Object object = contents[0];
-                if (object != null) body = object.toString();
+                if (object != null) {
+                    if (object instanceof Throwable) {
+                        StringBuffer buffer = new StringBuffer();
+                        Throwable e = (Throwable) object;
+                        StackTraceElement[] stackTrace = e.getStackTrace();
+                        buffer.append(e.getMessage()+"\n");
+                        for (int i = 0; i < stackTrace.length; i++) {
+                            buffer.append("file:" + stackTrace[i].getFileName() + "\n class:"
+                                + stackTrace[i].getClassName() + "\n method:"
+                                + stackTrace[i].getMethodName() + "\n line:"
+                                + stackTrace[i].getLineNumber() + "\n");
+                        }
+                        body = buffer.toString();
+                    } else {
+                        body = object.toString();
+                    }
+                }
                 if (type == JSON) {
                     body = formatJson(body);
                 } else if (type == XML) {

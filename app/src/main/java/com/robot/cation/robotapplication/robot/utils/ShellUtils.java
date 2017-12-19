@@ -124,7 +124,7 @@ public final class ShellUtils {
                 }
             }
         } catch (Exception e) {
-            LogUtils.w(e.getLocalizedMessage());
+            LogUtils.w(e);
         } finally {
             CloseUtils.closeIO(os, successResult, errorResult);
             if (process != null) {

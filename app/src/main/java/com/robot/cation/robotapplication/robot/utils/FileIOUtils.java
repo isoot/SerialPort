@@ -86,7 +86,7 @@ public final class FileIOUtils {
             }
             return true;
         } catch (IOException e) {
-            e.printStackTrace();
+            LogUtils.w(e);
             return false;
         } finally {
             CloseUtils.closeIO(is, os);
@@ -143,7 +143,7 @@ public final class FileIOUtils {
             bos.write(bytes);
             return true;
         } catch (IOException e) {
-            e.printStackTrace();
+           LogUtils.w(e);
             return false;
         } finally {
             CloseUtils.closeIO(bos);
@@ -206,7 +206,7 @@ public final class FileIOUtils {
             if (isForce) fc.force(true);
             return true;
         } catch (IOException e) {
-            e.printStackTrace();
+           LogUtils.w(e);
             return false;
         } finally {
             CloseUtils.closeIO(fc);
@@ -269,7 +269,7 @@ public final class FileIOUtils {
             if (isForce) mbb.force();
             return true;
         } catch (IOException e) {
-            e.printStackTrace();
+           LogUtils.w(e);
             return false;
         } finally {
             CloseUtils.closeIO(fc);
@@ -327,7 +327,7 @@ public final class FileIOUtils {
             bw.write(content);
             return true;
         } catch (IOException e) {
-            e.printStackTrace();
+           LogUtils.w(e);
             return false;
         } finally {
             CloseUtils.closeIO(bw);
@@ -446,7 +446,7 @@ public final class FileIOUtils {
             }
             return list;
         } catch (IOException e) {
-            e.printStackTrace();
+           LogUtils.w(e);
             return null;
         } finally {
             CloseUtils.closeIO(reader);
@@ -510,7 +510,7 @@ public final class FileIOUtils {
             }
             return sb.toString();
         } catch (IOException e) {
-            e.printStackTrace();
+           LogUtils.w(e);
             return null;
         } finally {
             CloseUtils.closeIO(reader);
@@ -547,7 +547,7 @@ public final class FileIOUtils {
             }
             return os.toByteArray();
         } catch (IOException e) {
-            e.printStackTrace();
+            LogUtils.w(e);
             return null;
         } finally {
             CloseUtils.closeIO(fis, os);
@@ -581,7 +581,7 @@ public final class FileIOUtils {
             }
             return byteBuffer.array();
         } catch (IOException e) {
-            e.printStackTrace();
+           LogUtils.w(e);
             return null;
         } finally {
             CloseUtils.closeIO(fc);
@@ -615,7 +615,7 @@ public final class FileIOUtils {
             mbb.get(result, 0, size);
             return result;
         } catch (IOException e) {
-            e.printStackTrace();
+           LogUtils.w(e);
             return null;
         } finally {
             CloseUtils.closeIO(fc);
@@ -646,7 +646,7 @@ public final class FileIOUtils {
         try {
             return file.createNewFile();
         } catch (IOException e) {
-            e.printStackTrace();
+            LogUtils.w(e);
             return false;
         }
     }

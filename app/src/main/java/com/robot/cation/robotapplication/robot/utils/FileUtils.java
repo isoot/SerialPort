@@ -101,7 +101,7 @@ public final class FileUtils {
      * @return {@code true}: 存在<br>{@code false}: 不存在
      */
     public static boolean isFileExists(final File file) {
-        return file != null && file.exists();//cn.goapk.market_1512983811_75432300.apk
+        return file != null && file.exists();
     }
 
     /**
@@ -237,7 +237,7 @@ public final class FileUtils {
         try {
             return file.createNewFile();
         } catch (IOException e) {
-            e.printStackTrace();
+           LogUtils.w(e);
             return false;
         }
     }
@@ -267,7 +267,7 @@ public final class FileUtils {
         try {
             return file.createNewFile();
         } catch (IOException e) {
-            e.printStackTrace();
+            LogUtils.w(e);
             return false;
         }
     }
@@ -373,7 +373,7 @@ public final class FileUtils {
             return FileIOUtils.writeFileFromIS(destFile, new FileInputStream(srcFile), false)
                 && !(isMove && !deleteFile(srcFile));
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+           LogUtils.w(e);
             return false;
         }
     }
@@ -508,6 +508,45 @@ public final class FileUtils {
             }
         }
         return dir.delete();
+    }
+
+    /**
+     * 删除目录
+     *
+     * @param dir 目录
+     * @return {@code true}: 删除成功<br>{@code false}: 删除失败
+     */
+    public static boolean deleteDir(final String dir, int today, int interval) {
+        File file = new File(dir);
+        if (dir == null) return false;
+        // 目录不存在返回 true
+        if (!file.exists()) return true;
+        // 不是目录返回 false
+        if (!file.isDirectory()) return false;
+        // 现在文件存在且是文件夹
+        File[] files = file.listFiles();
+        if (files != null && files.length != 0) {
+            for (File temp : files) {
+                String name = temp.getName();
+                String replaceTempName = name.replaceAll("flying-fox", "");
+                replaceTempName = replaceTempName.replaceAll("-", "");
+                replaceTempName = replaceTempName.replaceAll(" ", "");
+                replaceTempName = replaceTempName.replaceAll(".txt", "");
+                try {
+                    int tempTimeSize = Integer.parseInt(replaceTempName);
+                    if (today - tempTimeSize > interval) {
+                        if (temp.isFile()) {
+                            if (!temp.delete()) return false;
+                        } else if (temp.isDirectory()) {
+                            if (!deleteDir(temp)) return false;
+                        }
+                    }
+                } catch (Exception e) {
+                    LogUtils.w(e.getMessage());
+                }
+            }
+        }
+        return true;
     }
 
     /**
@@ -782,7 +821,7 @@ public final class FileUtils {
             is = new BufferedInputStream(new FileInputStream(file));
             p = (is.read() << 8) + is.read();
         } catch (IOException e) {
-            e.printStackTrace();
+            LogUtils.w(e);
         } finally {
             CloseUtils.closeIO(is);
         }
@@ -836,7 +875,7 @@ public final class FileUtils {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+           LogUtils.w(e);
         } finally {
             CloseUtils.closeIO(is);
         }
@@ -989,7 +1028,7 @@ public final class FileUtils {
             md = dis.getMessageDigest();
             return md.digest();
         } catch (NoSuchAlgorithmException | IOException e) {
-            e.printStackTrace();
+           LogUtils.w(e);
         } finally {
             CloseUtils.closeIO(dis);
         }
