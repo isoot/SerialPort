@@ -22,9 +22,9 @@
     <uses-permission android:name="android.permission.INSTALL_PACKAGES" />
 
     <!-- SDCard中创建与删除文件权限 -->
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
     <!-- 向SDCard写入数据权限 -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name=".robot.BaseApplication"
@@ -36,8 +36,7 @@
         android:theme="@style/AppTheme">
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="VMVPcsxRlQVlNi44SxztyUwZHby4ZyhP" >
-        </meta-data>
+            android:value="VMVPcsxRlQVlNi44SxztyUwZHby4ZyhP"></meta-data>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -76,17 +75,21 @@
                 <category android:name="com.robot.cation.robotapplication"></category>
             </intent-filter>
         </receiver>
-        <service android:name="com.baidu.location.f" android:enabled="true" android:process=":remote"> </service>
+        <service
+            android:name="com.baidu.location.f"
+            android:enabled="true"
+            android:process=":remote"></service>
         <receiver android:name=".robot.broadcast.UpdateReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.PACKAGE_REPLACED"/>
+                <action android:name="android.intent.action.PACKAGE_REPLACED" />
                 <action android:name="android.intent.action.PACKAGE_ADDED" />
                 <action android:name="android.intent.action.PACKAGE_REMOVED" />
-                <data android:scheme="package"/>
+
+                <data android:scheme="package" />
             </intent-filter>
         </receiver>
 
-        <activity android:name=".robot.activity.ConsoleActivity"/>
-        <activity android:name=".robot.activity.SerialPortPreferences"/>
+        <activity android:name=".robot.activity.ConsoleActivity" />
+        <activity android:name=".robot.activity.SerialPortPreferences" />
     </application>
 </manifest>

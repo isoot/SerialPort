@@ -1,6 +1,5 @@
 package com.robot.cation.robotapplication.robot.utils;
 
-import android.annotation.SuppressLint;
 import android.os.Environment;
 
 import java.io.BufferedInputStream;
@@ -32,6 +31,11 @@ public final class FileUtils {
 
     //在线升级产生的零时apk文件
     public static final String FLYING_FOX_APK = "/apk";
+    public static final int BYTE_1024 = 1024;
+    public static final int BYTE_B = BYTE_1024;
+    public static final int BYTE_K = 1048576;
+    public static final int BYTE_M = 1073741824;
+    public static final int BYTE_ERROR = -1;
 
 
     private FileUtils() {
@@ -857,7 +861,7 @@ public final class FileUtils {
      */
     public static String getDirSize(final File dir) {
         long len = getDirLength(dir);
-        return len == -1 ? "" : byte2FitMemorySize(len);
+        return len == -1 ? "" : byteFitMemorySizeString(len);
     }
 
     /**
@@ -878,7 +882,7 @@ public final class FileUtils {
      */
     public static String getFileSize(final File file) {
         long len = getFileLength(file);
-        return len == -1 ? "" : byte2FitMemorySize(len);
+        return len == -1 ? "" : byteFitMemorySizeString(len);
     }
 
     /**
@@ -1126,19 +1130,43 @@ public final class FileUtils {
      * @param byteNum 字节数
      * @return 合适内存大小
      */
-    @SuppressLint("DefaultLocale")
-    private static String byte2FitMemorySize(final long byteNum) {
+    private static String byteFitMemorySizeString(final long byteNum) {
+        String info = null;
         if (byteNum < 0) {
-            return "shouldn't be less than zero!";
-        } else if (byteNum < 1024) {
-            return String.format("%.3fB", (double) byteNum);
-        } else if (byteNum < 1048576) {
-            return String.format("%.3fKB", (double) byteNum / 1024);
-        } else if (byteNum < 1073741824) {
-            return String.format("%.3fMB", (double) byteNum / 1048576);
+            info = "shouldn't be less than zero!";
+        } else if (byteNum < BYTE_B) {
+            info = String.format("%.3fB", (double) byteNum);
+        } else if (byteNum < BYTE_K) {
+            info = String.format("%.3fKB", (double) byteNum / BYTE_B);
+        } else if (byteNum < BYTE_M) {
+            info = String.format("%.3fMB", (double) byteNum / BYTE_K);
         } else {
-            return String.format("%.3fGB", (double) byteNum / 1073741824);
+            info = String.format("%.3fGB", (double) byteNum / BYTE_M);
         }
+        return info;
+    }
+
+    /**
+     * 字节数转合适内存大小
+     * <p>保留 3 位小数</p>
+     *
+     * @param byteNum 字节数
+     * @return 合适内存大小
+     */
+    public static int byteFitMemorySizeInt(final long byteNum) {
+        int info;
+        if (byteNum < 0) {
+            info = BYTE_ERROR;
+        } else if (byteNum < BYTE_B) {
+            info = (int) byteNum;
+        } else if (byteNum < BYTE_K) {
+            info = (int) byteNum / BYTE_B;
+        } else if (byteNum < BYTE_M) {
+            info = (int) (byteNum / BYTE_K);
+        } else {
+            info = (int) (byteNum / BYTE_M);
+        }
+        return info;
     }
 
     private static boolean isSpace(final String s) {

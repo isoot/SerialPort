@@ -75,6 +75,8 @@ public final class ConvertUtils {
         return ret;
     }
 
+
+
     /**
      * hexChar 转 int
      *
