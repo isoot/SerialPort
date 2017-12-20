@@ -18,7 +18,7 @@ import java.util.Locale;
 public class Service extends IntentService {
 
 
-    public static final int LOG_SIZE_3G = 3;
+    public static final int LOG_SIZE_3G = 0;
 
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
