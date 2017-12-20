@@ -6,9 +6,11 @@ import android.content.Intent;
 import android.hardware.usb.UsbManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.Button;
 
 import com.robot.cation.robotapplication.robot.BaseApplication;
+import com.robot.cation.robotapplication.robot.activity.PlayerActivity;
 import com.robot.cation.robotapplication.robot.controller.Controller;
 
 import cn.wch.ch34xuartdriver.CH34xUARTDriver;
@@ -30,10 +32,17 @@ public class MainActivity extends AppCompatActivity {
             Controller.getInstance().configSerialPort();
         }
 
+        button = findViewById(R.id.button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, PlayerActivity.class);
+                startActivity(intent);
+            }
+        });
         Intent intent = new Intent(this, IntentService.class);
         startService(intent);
     }
-
 
 
     @Override

@@ -106,6 +106,10 @@
                 <data android:scheme="package" />
             </intent-filter>
         </receiver>
+        <activity
+            android:name=".robot.activity.PlayerActivity"
+            android:configChanges="orientation|keyboardHidden|screenLayout|screenSize"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
     </application>
 
 </manifest>
