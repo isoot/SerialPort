@@ -25,35 +25,30 @@ public class RobotReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         try {
             Bundle bundle = intent.getExtras();
-            LogUtils.d("RobotReceiver action:" + intent.getAction() + ",extras:" + printBundle(bundle));
             if (JPushInterface.ACTION_REGISTRATION_ID.equals(intent.getAction())) {
                 String regId = bundle.getString(JPushInterface.EXTRA_REGISTRATION_ID);
-                LogUtils.d("RobotReceiver 接收Registration Id:" + regId);
+                LogUtils.w("RobotReceiver 接收Registration Id:" + regId);
                 //send the Registration Id to your server...
             } else if (JPushInterface.ACTION_MESSAGE_RECEIVED.equals(intent.getAction())) {
-                LogUtils.d("RobotReceiver 接收到推送下来的自定义消息" + bundle.getString(JPushInterface.EXTRA_MESSAGE));
+                String customMessage = bundle.getString(JPushInterface.EXTRA_MESSAGE);
+                LogUtils.w("RobotReceiver 接收到推送下来的自定义消息" +customMessage);
+                PushMessageManager.getInstance().informPush(customMessage);
             } else if (JPushInterface.ACTION_NOTIFICATION_RECEIVED.equals(intent.getAction())) {
-                LogUtils.d("RobotReceiver 接收到推送下来的通知");
+                LogUtils.w("RobotReceiver 接收到推送下来的通知");
                 int notifactionid = bundle.getInt(JPushInterface.EXTRA_NOTIFICATION_ID);
-                LogUtils.d("RobotReceiver 接收到推送下来的通知的ID:" + notifactionid);
+                LogUtils.w("RobotReceiver 接收到推送下来的通知的ID:" + notifactionid);
 
             } else if (JPushInterface.ACTION_NOTIFICATION_OPENED.equals(intent.getAction())) {
-                LogUtils.d("RobotReceiver 用户点击打开了通知");
-                //打开自定义的Activity
-                //Intent i = new Intent(context, TestActivity.class);
-                //i.putExtras(bundle);
-                //i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                //i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                //context.startActivity(i);
+                LogUtils.w("RobotReceiver 用户点击打开了通知");
 
             } else if (JPushInterface.ACTION_RICHPUSH_CALLBACK.equals(intent.getAction())) {
                 //在这里根据 JPushInterface.EXTRA_EXTRA 的内容处理代码，比如打开新的Activity， 打开一个网页等..
-                LogUtils.d("RobotReceiver 用户收到到RICH PUSH CALLBACK:" + bundle.getString(JPushInterface.EXTRA_EXTRA));
+                LogUtils.w("RobotReceiver 用户收到到RICH PUSH CALLBACK:" + bundle.getString(JPushInterface.EXTRA_EXTRA));
             } else if (JPushInterface.ACTION_CONNECTION_CHANGE.equals(intent.getAction())) {
                 boolean connected = intent.getBooleanExtra(JPushInterface.EXTRA_CONNECTION_CHANGE, false);
-                LogUtils.d("RobotReceiver " + intent.getAction() + " connected state change to:" + connected);
+                LogUtils.w("RobotReceiver " + intent.getAction() + " connected state change to:" + connected);
             } else {
-                LogUtils.d("RobotReceiver  Unhandled intent - " + intent.getAction() );
+                LogUtils.w("RobotReceiver  Unhandled intent - " + intent.getAction());
             }
         } catch (Exception e) {
             LogUtils.w(e.getLocalizedMessage());
@@ -70,7 +65,7 @@ public class RobotReceiver extends BroadcastReceiver {
                 sb.append("\nkey:" + key + ", value:" + bundle.getBoolean(key));
             } else if (key.equals(JPushInterface.EXTRA_EXTRA)) {
                 if (TextUtils.isEmpty(bundle.getString(JPushInterface.EXTRA_EXTRA))) {
-                    LogUtils.i("This message has no Extra data");
+                    LogUtils.w("This message has no Extra data");
                     continue;
                 }
 
@@ -84,7 +79,7 @@ public class RobotReceiver extends BroadcastReceiver {
                             myKey + " - " + json.optString(myKey) + "]");
                     }
                 } catch (JSONException e) {
-                    LogUtils.e("Get message extra JSON error!");
+                    LogUtils.e(e);
                 }
 
             } else {

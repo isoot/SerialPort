@@ -4,13 +4,13 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.robot.cation.robotapplication.R;
 import com.robot.cation.robotapplication.robot.player.EasyVideoCallback;
 import com.robot.cation.robotapplication.robot.player.EasyVideoPlayer;
+import com.robot.cation.robotapplication.robot.push.broadcast.PushCallBack;
+import com.robot.cation.robotapplication.robot.push.broadcast.PushMessageManager;
 
 public class PlayerActivity extends AppCompatActivity implements EasyVideoCallback {
 
@@ -24,7 +24,14 @@ public class PlayerActivity extends AppCompatActivity implements EasyVideoCallba
         player = (EasyVideoPlayer) findViewById(R.id.player);
         assert player != null;
         player.setCallback(this);
+        PushMessageManager.getInstance().addCallBack(new PushCallBack() {
+            @Override
+            public void push(String message) {
+                player.showOrderForm(message);
+            }
+        });
     }
+
 
     @Override
     protected void onPause() {
@@ -42,22 +49,22 @@ public class PlayerActivity extends AppCompatActivity implements EasyVideoCallba
 
     @Override
     public void onPreparing(EasyVideoPlayer player) {
-        Log.d("EVP-Sample", "onPreparing()");
+
     }
 
     @Override
     public void onPrepared(EasyVideoPlayer player) {
-        Log.d("EVP-Sample", "onPrepared()");
+        player.videoStart();
     }
 
     @Override
     public void onBuffering(int percent) {
-        Log.d("EVP-Sample", "onBuffering(): " + percent + "%");
+
     }
 
     @Override
     public void onError(EasyVideoPlayer player, Exception e) {
-        Log.d("EVP-Sample", "onError(): " + e.getMessage());
+
     }
 
     @Override
@@ -69,17 +76,17 @@ public class PlayerActivity extends AppCompatActivity implements EasyVideoCallba
 
     @Override
     public void onRetry(EasyVideoPlayer player, Uri source) {
-        Toast.makeText(this, "Retry", Toast.LENGTH_SHORT).show();
+
     }
 
     @Override
     public void onSubmit(EasyVideoPlayer player, Uri source) {
-        Toast.makeText(this, "Submit", Toast.LENGTH_SHORT).show();
+
     }
 
     @Override
     public void onClickVideoFrame(EasyVideoPlayer player) {
-        Toast.makeText(this, "Click video frame.", Toast.LENGTH_SHORT).show();
+
     }
 
     /**
