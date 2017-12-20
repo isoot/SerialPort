@@ -74,29 +74,25 @@ public class Controller {
      * @param flowControl
      */
     private void setOpen(int baudRate, byte dataBit, byte stopBit, byte parity, byte flowControl) {
-        {
-            if (!isOpen) {
-                int rectal = BaseApplication.driver.ResumeUsbList();
-                if (rectal == -1)// ResumeUsbList方法用于枚举CH34X设备以及打开相关设备
-                {
-                    LogUtils.w("打开设备失败!");
-                } else if (rectal == 0) {
-                    if (!BaseApplication.driver.UartInit()) {//对串口设备进行初始化操作
-                        LogUtils.w("设备初始化失败!");
-                        return;
-                    }
-                    LogUtils.w("打开设备成功!");
-                    isOpen = true;
-                    readThread.readStart(isOpen);//开启读线程读取串口接收的数据
-                } else {
-                    LogUtils.w("未授权限 请核实");
+        if (!isOpen) {
+            int rectal = BaseApplication.driver.ResumeUsbList();
+            if (rectal == -1)// ResumeUsbList方法用于枚举CH34X设备以及打开相关设备
+            {
+                LogUtils.w("打开设备失败!");
+            } else if (rectal == 0) {
+                if (!BaseApplication.driver.UartInit()) {//对串口设备进行初始化操作
+                    LogUtils.w("设备初始化失败!");
+                    return;
                 }
+                LogUtils.w("打开设备成功!");
+                isOpen = true;
+                readThread.readStart(isOpen);//开启读线程读取串口接收的数据
             } else {
-                BaseApplication.driver.CloseDevice();
-                isOpen = false;
+                LogUtils.w("未授权限 请核实");
             }
         }
-        if (BaseApplication.driver.SetConfig(baudRate, dataBit, stopBit, parity,//配置串口波特率，函数说明可参照编程手册
+
+        if (isOpen && BaseApplication.driver.SetConfig(baudRate, dataBit, stopBit, parity,//配置串口波特率，函数说明可参照编程手册
             flowControl)) {
             LogUtils.w("串口设置成功!");
         } else {

@@ -29,6 +29,9 @@ public final class FileUtils {
     //奔溃日志保存文件夹
     public static final String FLYING_FOX_CRASH = "/crash";
 
+    //视频缓存路径
+    public static final String FLYING_FOX_VIDEO = "/video";
+
     //在线升级产生的零时apk文件
     public static final String FLYING_FOX_APK = "/apk";
     public static final int BYTE_1024 = 1024;
@@ -72,6 +75,16 @@ public final class FileUtils {
     public static String getBaseFileCrashPath() {
         File dataDirectory = Environment.getExternalStorageDirectory();
         return dataDirectory.getAbsolutePath() + FLYING_FOX + FLYING_FOX_CRASH;
+    }
+
+    /**
+     * 获取保存路径  data目录下面的
+     *
+     * @return
+     */
+    public static String getBaseFileVideoPath() {
+        File dataDirectory = Environment.getExternalStorageDirectory();
+        return dataDirectory.getAbsolutePath() + FLYING_FOX + FLYING_FOX_VIDEO;
     }
 
     /**
@@ -237,7 +250,7 @@ public final class FileUtils {
         try {
             return file.createNewFile();
         } catch (IOException e) {
-           LogUtils.w(e);
+            LogUtils.w(e);
             return false;
         }
     }
@@ -373,7 +386,7 @@ public final class FileUtils {
             return FileIOUtils.writeFileFromIS(destFile, new FileInputStream(srcFile), false)
                 && !(isMove && !deleteFile(srcFile));
         } catch (FileNotFoundException e) {
-           LogUtils.w(e);
+            LogUtils.w(e);
             return false;
         }
     }
@@ -875,7 +888,7 @@ public final class FileUtils {
                 }
             }
         } catch (IOException e) {
-           LogUtils.w(e);
+            LogUtils.w(e);
         } finally {
             CloseUtils.closeIO(is);
         }
@@ -1028,7 +1041,7 @@ public final class FileUtils {
             md = dis.getMessageDigest();
             return md.digest();
         } catch (NoSuchAlgorithmException | IOException e) {
-           LogUtils.w(e);
+            LogUtils.w(e);
         } finally {
             CloseUtils.closeIO(dis);
         }
