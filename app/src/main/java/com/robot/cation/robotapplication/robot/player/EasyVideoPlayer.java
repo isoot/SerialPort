@@ -47,8 +47,10 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.robot.cation.robotapplication.R;
+import com.robot.cation.robotapplication.robot.utils.AppUtils;
 import com.robot.cation.robotapplication.robot.utils.LogUtils;
 import com.robot.cation.robotapplication.robot.utils.PlayerUtil;
+import com.robot.cation.robotapplication.robot.utils.ScreenUtils;
 
 import java.io.IOException;
 import java.lang.annotation.Retention;
@@ -67,6 +69,10 @@ public class EasyVideoPlayer extends FrameLayout
     MediaPlayer.OnErrorListener,
     View.OnClickListener,
     SeekBar.OnSeekBarChangeListener {
+
+    public static final int CONTROLS_DELAY_MILLIS = 1000;
+    public static final int DELAYEWD_DELAY_MILLIS = 500;
+    public static final int SHOW_INFO_DELAY_MILLIS = 10000;
 
     @IntDef({LEFT_ACTION_NONE, LEFT_ACTION_RESTART, LEFT_ACTION_RETRY})
     @Retention(RetentionPolicy.SOURCE)
@@ -105,8 +111,11 @@ public class EasyVideoPlayer extends FrameLayout
     private Surface mSurface;
 
     private View mControlsFrame;
+    private View mShowInfoFrame;
     private View mProgressFrame;
     private View mClickFrame;
+
+    private TextView mShowInfo;
 
     private SeekBar mSeeker;
     private TextView mLabelPosition;
@@ -148,7 +157,6 @@ public class EasyVideoPlayer extends FrameLayout
     private int mThemeColor = 0;
     private boolean mAutoFullscreen = false;
     private boolean mLoop = false;
-
     // Runnable used to run code on an interval to update counters and seeker
     private final Runnable mUpdateCounters =
         new Runnable() {
@@ -234,17 +242,19 @@ public class EasyVideoPlayer extends FrameLayout
         if (mSubmitText == null) mSubmitText = context.getResources().getText(R.string.evp_submit);
 
         if (mRestartDrawable == null)
-            mRestartDrawable = AppCompatResources.getDrawable(context, R.drawable.evp_action_restart);
+            mRestartDrawable = AppCompatResources.getDrawable(context, R.drawable.action_restart);
         if (mPlayDrawable == null)
-            mPlayDrawable = AppCompatResources.getDrawable(context, R.drawable.evp_action_play);
+            mPlayDrawable = AppCompatResources.getDrawable(context, R.drawable.action_play);
         if (mPauseDrawable == null)
-            mPauseDrawable = AppCompatResources.getDrawable(context, R.drawable.evp_action_pause);
+            mPauseDrawable = AppCompatResources.getDrawable(context, R.drawable.action_pause);
     }
 
     @Override
     public void setSource(@NonNull Uri source) {
         boolean hadSource = mSource != null;
-        if (hadSource) stop();
+        if (hadSource) {
+            stop();
+        }
         mSource = source;
         if (mPlayer != null) {
             if (hadSource) {
@@ -475,7 +485,20 @@ public class EasyVideoPlayer extends FrameLayout
                     }
                 })
             .start();
+        mHandler.removeCallbacks(hintControlsRunnable);
+        mHandler.postDelayed(hintControlsRunnable, CONTROLS_DELAY_MILLIS);
     }
+
+    /**
+     * hint controls
+     */
+    private Runnable hintControlsRunnable = new Runnable() {
+
+        @Override
+        public void run() {
+            hideControls();
+        }
+    };
 
     @Override
     public void hideControls() {
@@ -498,6 +521,77 @@ public class EasyVideoPlayer extends FrameLayout
                 })
             .start();
     }
+
+    @Override
+    public void showInfo() {
+        mShowInfoFrame.animate().cancel();
+        mShowInfoFrame.setAlpha(0f);
+        mShowInfoFrame.setVisibility(View.VISIBLE);
+        mShowInfoFrame
+            .animate()
+            .alpha(1f)
+            .setInterpolator(new DecelerateInterpolator())
+            .setListener(
+                new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        //Do nothing
+                    }
+                })
+            .start();
+    }
+
+    @Override
+    public void hintInfo() {
+        mShowInfoFrame.animate().cancel();
+        mShowInfoFrame.setAlpha(1f);
+        mShowInfoFrame.setVisibility(View.VISIBLE);
+        mShowInfoFrame
+            .animate()
+            .alpha(0f)
+            .setInterpolator(new DecelerateInterpolator())
+            .setListener(
+                new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        if (mShowInfoFrame != null) mShowInfoFrame.setVisibility(View.INVISIBLE);
+                    }
+                })
+            .start();
+    }
+
+    /**
+     * show order form info
+     */
+    public void showOrderForm(final String message) {
+        if (AppUtils.isMainThread()) {
+            showInfo(message);
+        } else {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    showInfo(message);
+                }
+            });
+        }
+    }
+
+    private void showInfo(String message) {
+        mShowInfo.setText(message);
+        showInfo();
+        mHandler.removeCallbacks(hintInfoRunnable);
+        mHandler.postDelayed(hintInfoRunnable, SHOW_INFO_DELAY_MILLIS);
+    }
+
+    /**
+     * hint info show
+     */
+    private Runnable hintInfoRunnable = new Runnable() {
+        @Override
+        public void run() {
+            hintInfo();
+        }
+    };
 
     @CheckResult
     @Override
@@ -685,7 +779,6 @@ public class EasyVideoPlayer extends FrameLayout
     public void onPrepared(MediaPlayer mediaPlayer) {
         mProgressFrame.setVisibility(View.INVISIBLE);
         mIsPrepared = true;
-        if (mCallback != null) mCallback.onPrepared(this);
         mLabelPosition.setText(PlayerUtil.getDurationString(0, false));
         mLabelDuration.setText(PlayerUtil.getDurationString(mediaPlayer.getDuration(), false));
         mSeeker.setProgress(0);
@@ -704,6 +797,7 @@ public class EasyVideoPlayer extends FrameLayout
             mPlayer.start();
             mPlayer.pause();
         }
+        if (mCallback != null) mCallback.onPrepared(this);
     }
 
     @Override
@@ -802,7 +896,7 @@ public class EasyVideoPlayer extends FrameLayout
         final LayoutInflater li = LayoutInflater.from(getContext());
 
         // Inflate and add progress
-        mProgressFrame = li.inflate(R.layout.evp_include_progress, this, false);
+        mProgressFrame = li.inflate(R.layout.include_progress, this, false);
         addView(mProgressFrame);
 
         // Instantiate and add click frame (used to toggle controls)
@@ -815,8 +909,15 @@ public class EasyVideoPlayer extends FrameLayout
             new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
+        //Inflate show info
+        mShowInfoFrame = li.inflate(R.layout.include_info, this, false);
+        LayoutParams infoParams = new LayoutParams(
+            ScreenUtils.getScreenWidth() / 5, ScreenUtils.getScreenHeight() / 2);
+        infoParams.gravity = Gravity.RIGHT;
+        addView(mShowInfoFrame, infoParams);
+        mShowInfoFrame.setVisibility(View.GONE);
         // Inflate controls
-        mControlsFrame = li.inflate(R.layout.evp_include_controls, this, false);
+        mControlsFrame = li.inflate(R.layout.include_controls, this, false);
         final LayoutParams controlsLp =
             new LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -838,6 +939,8 @@ public class EasyVideoPlayer extends FrameLayout
                     }
                 });
         }
+
+        mShowInfo = (TextView) mShowInfoFrame.findViewById(R.id.tv_show_info);
 
         // Retrieve controls
         mSeeker = (SeekBar) mControlsFrame.findViewById(R.id.seeker);
@@ -881,12 +984,7 @@ public class EasyVideoPlayer extends FrameLayout
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.btnPlayPause) {
-            if (mPlayer.isPlaying()) {
-                pause();
-            } else {
-                if (mHideControlsOnPlay && !mControlsDisabled) hideControls();
-                start();
-            }
+            videoStart();
         } else if (view.getId() == R.id.btnRestart) {
             seekTo(0);
             if (!isPlaying()) start();
@@ -895,6 +993,30 @@ public class EasyVideoPlayer extends FrameLayout
         } else if (view.getId() == R.id.btnSubmit) {
             if (mCallback != null) mCallback.onSubmit(this, mSource);
         }
+    }
+
+    /**
+     * start video
+     */
+    public void videoStart() {
+        if (mPlayer.isPlaying()) {
+            pause();
+        } else {
+            if (mHideControlsOnPlay && !mControlsDisabled) hideControls();
+            start();
+        }
+    }
+
+    /**
+     * delayed start video
+     */
+    public void videoDelayedStart() {
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                videoStart();
+            }
+        }, DELAYEWD_DELAY_MILLIS);
     }
 
     @Override
@@ -925,6 +1047,7 @@ public class EasyVideoPlayer extends FrameLayout
         mBtnRestart = null;
         mBtnSubmit = null;
 
+        mShowInfoFrame = null;
         mControlsFrame = null;
         mClickFrame = null;
         mProgressFrame = null;
@@ -1042,6 +1165,7 @@ public class EasyVideoPlayer extends FrameLayout
     private void invalidateThemeColors() {
         final int labelColor = PlayerUtil.isColorDark(mThemeColor) ? Color.WHITE : Color.BLACK;
         mControlsFrame.setBackgroundColor(PlayerUtil.adjustAlpha(mThemeColor, 0.8f));
+        mShowInfoFrame.setBackgroundColor(PlayerUtil.adjustAlpha(mThemeColor, 0.2f));
         tintSelector(mBtnRestart, labelColor);
         tintSelector(mBtnPlayPause, labelColor);
         mLabelDuration.setTextColor(labelColor);
@@ -1083,4 +1207,5 @@ public class EasyVideoPlayer extends FrameLayout
             }
         }
     }
+
 }

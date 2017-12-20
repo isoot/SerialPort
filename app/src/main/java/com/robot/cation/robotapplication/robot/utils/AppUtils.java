@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.pm.Signature;
 import android.graphics.drawable.Drawable;
+import android.os.Looper;
 import android.util.Log;
 
 import java.io.File;
@@ -725,4 +726,9 @@ public final class AppUtils {
         }
         return false;
     }
+
+    public static boolean isMainThread() {
+        return Looper.getMainLooper().getThread() == Thread.currentThread();
+    }
+
 }

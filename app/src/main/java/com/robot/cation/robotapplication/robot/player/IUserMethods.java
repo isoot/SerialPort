@@ -68,6 +68,10 @@ interface IUserMethods {
 
   void hideControls();
 
+  void showInfo();
+
+  void hintInfo();
+
   @CheckResult
   boolean isControlsShown();
 
