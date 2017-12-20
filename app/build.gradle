@@ -58,5 +58,5 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.9.1'
     implementation files('libs/BaiduLBS_Android.jar')
     implementation files('libs/CH34xUARTDriver.jar')
-
+    compile 'me.zhanghai.android.materialprogressbar:library:1.1.7'
 }
