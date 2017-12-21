@@ -59,4 +59,5 @@ dependencies {
     implementation files('libs/BaiduLBS_Android.jar')
     implementation files('libs/CH34xUARTDriver.jar')
     compile 'me.zhanghai.android.materialprogressbar:library:1.1.7'
+    compile 'com.danikula:videocache:2.7.0'
 }

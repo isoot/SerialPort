@@ -15,27 +15,32 @@ import java.util.Locale;
  * Created by THINK on 2017/12/19.
  */
 
-public class Service extends IntentService {
+public class LogCheckService extends IntentService {
 
 
-    public static final int LOG_SIZE_3G = 0;
+    public static final int LOG_SIZE_1G = 1;
 
+    public LogCheckService(){
+        super("LogCheckService");
+
+    }
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
      *
      * @param name Used to name the worker thread, important only for debugging.
      */
-    public Service(String name) {
+    public LogCheckService(String name) {
         super(name);
     }
 
+
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-        long logSize = FileUtils.getFileLength(FileUtils.getBaseFileLogPath());
-        long crashSize = FileUtils.getFileLength(FileUtils.getBaseFileCrashPath());
+        long logSize = FileUtils.getDirectoryLength(FileUtils.getBaseFileLogPath());
+        long crashSize = FileUtils.getDirectoryLength(FileUtils.getBaseFileCrashPath());
         FileUtils.deleteDir(FileUtils.getBaseFileAPKPath());
         int size = FileUtils.byteFitMemorySizeInt(logSize);
-        if (size > LOG_SIZE_3G) {
+        if (size > LOG_SIZE_1G) {
             //删除log日志 MMddHH
             Date now = new Date(System.currentTimeMillis());
             Format FORMAT = new SimpleDateFormat("MMddHH", Locale.getDefault());
@@ -43,9 +48,13 @@ public class Service extends IntentService {
             FileUtils.deleteDir(FileUtils.getBaseFileLogPath(), Integer.parseInt(time), 3);
         }
         size = FileUtils.byteFitMemorySizeInt(crashSize);
-        if (size > LOG_SIZE_3G) {
+        if (size > LOG_SIZE_1G) {
             //删除crash日志
-
+            //删除log日志 MMddHH
+            Date now = new Date(System.currentTimeMillis());
+            Format FORMAT = new SimpleDateFormat("MMddHHmm", Locale.getDefault());
+            String time = FORMAT.format(now);
+            FileUtils.deleteDir(FileUtils.getBaseFileCrashPath(), Integer.parseInt(time), 3);
         }
     }
 

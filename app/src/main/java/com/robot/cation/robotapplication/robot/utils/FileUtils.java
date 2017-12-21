@@ -87,6 +87,25 @@ public final class FileUtils {
         return dataDirectory.getAbsolutePath() + FLYING_FOX + FLYING_FOX_VIDEO;
     }
 
+    public static void mkdirInit() {
+        File file1 = new File(getBaseFileVideoPath());
+        if (file1 != null && !file1.exists()) {
+            file1.mkdirs();
+        }
+        File file2 = new File(getBaseFileCrashPath());
+        if (file2 != null && !file2.exists()) {
+            file2.mkdirs();
+        }
+        File file3 = new File(getBaseFileLogPath());
+        if (file3 != null && !file3.exists()) {
+            file3.mkdirs();
+        }
+        File file4 = new File(getBaseFileAPKPath());
+        if (file4 != null && !file4.exists()) {
+            file4.mkdirs();
+        }
+    }
+
     /**
      * 根据文件路径获取文件
      *
@@ -188,6 +207,16 @@ public final class FileUtils {
      */
     public static boolean isFile(final File file) {
         return file != null && file.exists() && file.isFile();
+    }
+
+    /**
+     * 判断是否是文件
+     *
+     * @param file 文件
+     * @return {@code true}: 是<br>{@code false}: 否
+     */
+    public static boolean isisDirectory(final File file) {
+        return file != null && file.exists() && file.isDirectory();
     }
 
     /**
@@ -980,6 +1009,18 @@ public final class FileUtils {
     }
 
     /**
+     * 获取文件夹长度
+     *
+     * @param filePath 文件路径
+     * @return 文件长度
+     */
+    public static long getDirectoryLength(final String filePath) {
+        File directory = new File(filePath);
+        if (!isisDirectory(directory)) return -1;
+        return directory.length();
+    }
+
+    /**
      * 获取文件长度
      *
      * @param file 文件
@@ -1207,17 +1248,7 @@ public final class FileUtils {
      */
     public static int byteFitMemorySizeInt(final long byteNum) {
         int info;
-        if (byteNum < 0) {
-            info = BYTE_ERROR;
-        } else if (byteNum < BYTE_B) {
-            info = (int) byteNum;
-        } else if (byteNum < BYTE_K) {
-            info = (int) byteNum / BYTE_B;
-        } else if (byteNum < BYTE_M) {
-            info = (int) (byteNum / BYTE_K);
-        } else {
-            info = (int) (byteNum / BYTE_M);
-        }
+        info = (int) (byteNum / BYTE_M);
         return info;
     }
 
@@ -1230,6 +1261,7 @@ public final class FileUtils {
         }
         return true;
     }
+
 
     public interface OnReplaceListener {
         boolean onReplace();

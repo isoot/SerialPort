@@ -1,16 +1,22 @@
 package com.robot.cation.robotapplication.robot;
 
 import android.app.Application;
+import android.content.Context;
 
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
+import com.danikula.videocache.HttpProxyCacheServer;
+import com.robot.cation.robotapplication.robot.constant.MemoryConstants;
 import com.robot.cation.robotapplication.robot.http.DownloadUtil;
+import com.robot.cation.robotapplication.robot.player.BaseFileNameGenerator;
 import com.robot.cation.robotapplication.robot.utils.CrashUtils;
 import com.robot.cation.robotapplication.robot.utils.FileUtils;
 import com.robot.cation.robotapplication.robot.utils.LogUtils;
 import com.robot.cation.robotapplication.robot.utils.Utils;
+
+import java.io.File;
 
 import cn.jpush.android.api.JPushInterface;
 import cn.wch.ch34xuartdriver.CH34xUARTDriver;
@@ -26,6 +32,7 @@ public class BaseApplication extends Application {
      */
     public static CH34xUARTDriver driver;
 
+    private HttpProxyCacheServer proxy;
 
     /**
      * 配置
@@ -145,4 +152,17 @@ public class BaseApplication extends Application {
         }
     }
 
+    public static HttpProxyCacheServer getProxy(Context context) {
+        BaseApplication app = (BaseApplication) context.getApplicationContext();
+        return app.proxy == null ? (app.proxy = app.newProxy()) : app.proxy;
+    }
+
+    private HttpProxyCacheServer newProxy() {
+        return new HttpProxyCacheServer.Builder(this)
+            .cacheDirectory(new File(FileUtils.getBaseFileVideoPath()))
+            .maxCacheFilesCount(20)
+            .maxCacheSize(MemoryConstants.KB * MemoryConstants.KB * MemoryConstants.KB)
+            .fileNameGenerator(new BaseFileNameGenerator())
+            .build();
+    }
 }
