@@ -5,4 +5,5 @@ package com.robot.cation.robotapplication.robot.robot.coffee;
  */
 
 public class CoffeeConfig {
+    
 }
