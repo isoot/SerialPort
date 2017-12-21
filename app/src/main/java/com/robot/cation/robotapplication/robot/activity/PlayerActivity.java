@@ -11,6 +11,8 @@ import android.widget.FrameLayout;
 import com.robot.cation.robotapplication.R;
 import com.robot.cation.robotapplication.robot.BaseApplication;
 import com.robot.cation.robotapplication.robot.constant.VideoUrlConstants;
+import com.robot.cation.robotapplication.robot.controller.LocalDataManipulation;
+import com.robot.cation.robotapplication.robot.greenbean.PlayerVideoUrl;
 import com.robot.cation.robotapplication.robot.player.EasyVideoCallback;
 import com.robot.cation.robotapplication.robot.player.EasyVideoPlayer;
 import com.robot.cation.robotapplication.robot.push.broadcast.PushCallBack;
@@ -74,7 +76,14 @@ public class PlayerActivity extends AppCompatActivity implements EasyVideoCallba
 
     @Override
     public void onError(EasyVideoPlayer player, Exception e) {
-
+        ++count;
+        List<String> url = VideoUrlConstants.getUrl();
+        if (count < url.size()) {
+            player.setSource(Uri.parse(url.get(count)));
+        } else {
+            count = 0;
+            player.setSource(Uri.parse(url.get(count)));
+        }
     }
 
     @Override
@@ -139,5 +148,17 @@ public class PlayerActivity extends AppCompatActivity implements EasyVideoCallba
     @Override
     public void onGlobalLayout() {
         // Do nothing
+    }
+    
+    private void upDataPlayer(){
+        //获取需要播放的结合
+        List<PlayerVideoUrl> playerVideoUrls = LocalDataManipulation.getInstance().queryPlayerVideoUrlAll();
+        //筛选集合
+        for (PlayerVideoUrl url: playerVideoUrls) {
+           //删除多余的数据
+            //并且移除缓存
+//            BaseApplication.getProxy(this).isCached()
+        }
+
     }
 }

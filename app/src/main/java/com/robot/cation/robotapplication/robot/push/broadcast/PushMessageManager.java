@@ -3,6 +3,12 @@ package com.robot.cation.robotapplication.robot.push.broadcast;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+
 /**
  * Created by THINK on 2017/12/20.
  */
@@ -32,5 +38,20 @@ public class PushMessageManager {
         for (int i = 0; i < list.size(); i++) {
             list.get(i).push(message);
         }
+    }
+
+    /**
+     * 更新数据库
+     */
+    private void upDataLocation(String message) {
+        Observable.create(new ObservableOnSubscribe<Object>() {
+            @Override
+            public void subscribe(ObservableEmitter<Object> e) throws Exception {
+//                GsonUtil.toBean() 解析JSON
+//                LocalDataManipulation.getInstance().insertPlayerVideoUrl();//插入数据库
+            }
+        }).subscribeOn(Schedulers.newThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe();
     }
 }

@@ -9,9 +9,9 @@ import java.util.List;
 
 public class VideoUrlConstants {
     public static final String VIDEO1 = "http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f20.mp4";
-    public static final String VIDEO2 = "http://v4.music.126.net/20171221040747/5e32e8c274dfb7282976d9db0648b660/web/cloudmusic/MCA0IyAhM2EwITAhMiAwMA==/mv/5432420/8f740514387ab59eb7b98de16efc7381.mp4";
-    public static final String VIDEO3 = "http://v6c.music.126.net/20171220211730/1b75c4ac4fab7edf7d82d5d7a60bac71/web/cloudmusic/MDJkIDIgMDAwZjA1IDAgNg==/mv/5590153/ce9966119fdaf0708a7255adf10d878c.mp4";
-    public static final String VIDEO4 = "http://v4.music.126.net/20171220211855/b73a0f1d5878a08a01e788b8593460b1/web/cloudmusic/MzA2MzEzOTI=/433d39d06c20821188e3d6a0675198e0/abfd6e6dd326844453e242ecbadc33a6.mp4";
+    public static final String VIDEO2 = "http://v6c.music.126.net/20171221154402/ccbde66d672eecbb3dc08eb92c16cf22/web/cloudmusic/JGQhMSMhMTAiJjMgMDExIg==/mv/==/5319/20140428175821/2428821185777187_720.mp4";
+    public static final String VIDEO3 = "http://v4.music.126.net/20171221154441/78cebf57ef958ade5d72d5a8a296598a/web/cloudmusic/JDAzIiUyISAgNDAgIWBlIA==/mv/5398096/9f808af363efbc28fecd07c0d126cd05.mp4";
+    public static final String VIDEO4 = "http://v4.music.126.net/20171221154526/a661e4a2aded625b82955a2b76b66315/web/cloudmusic/MSIwJCAyICQxODQgISI1YQ==/mv/5533012/716bc0c889c4d5da2d7f7321049ffe04.mp4";
 
     public static List<String> getUrl() {
         List list = new ArrayList();
