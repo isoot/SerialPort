@@ -19,6 +19,7 @@ import okhttp3.Response;
 public class DownloadUtil {
 
     public static final int DOWN_FILE_BYTE_SIZE = 2048;
+    public static final int NAME_END_INDEX = 50;
     private static DownloadUtil downloadUtil;
     private final OkHttpClient okHttpClient;
 
@@ -45,7 +46,9 @@ public class DownloadUtil {
             public void onFailure(Call call, IOException e) {
                 // 下载失败
                 LogUtils.w(e);
-                listener.onDownloadFailed();
+                if (listener != null) {
+                    listener.onDownloadFailed();
+                }
             }
 
             @Override
@@ -70,10 +73,14 @@ public class DownloadUtil {
                     }
                     fos.flush();
                     // 下载完成
-                    listener.onDownloadSuccess(file.getAbsolutePath());
+                    if (listener != null) {
+                        listener.onDownloadSuccess(file.getAbsolutePath());
+                    }
                 } catch (Exception e) {
                     LogUtils.w(e);
-                    listener.onDownloadFailed();
+                    if (listener != null) {
+                        listener.onDownloadFailed();
+                    }
                 } finally {
                     CloseUtils.closeIO(is, fos);
                 }
@@ -102,8 +109,13 @@ public class DownloadUtil {
      * @return 从下载连接中解析出文件名
      */
     @NonNull
-    private String getNameFromUrl(String url) {
-        return url.substring(url.lastIndexOf("/") + 1);
+    public static String getNameFromUrl(String url) {
+        String name = url.substring(url.lastIndexOf("/") + 1);
+        if (name.length() > NAME_END_INDEX) {
+            return name.substring(0, NAME_END_INDEX);
+        } else {
+            return name;
+        }
     }
 
     public interface OnDownloadListener {

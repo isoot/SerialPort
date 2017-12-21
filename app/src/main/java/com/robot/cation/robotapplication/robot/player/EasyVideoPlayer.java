@@ -46,12 +46,16 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.danikula.videocache.CacheListener;
+import com.danikula.videocache.HttpProxyCacheServer;
 import com.robot.cation.robotapplication.R;
+import com.robot.cation.robotapplication.robot.BaseApplication;
 import com.robot.cation.robotapplication.robot.utils.AppUtils;
 import com.robot.cation.robotapplication.robot.utils.LogUtils;
 import com.robot.cation.robotapplication.robot.utils.PlayerUtil;
 import com.robot.cation.robotapplication.robot.utils.ScreenUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -68,11 +72,16 @@ public class EasyVideoPlayer extends FrameLayout
     MediaPlayer.OnVideoSizeChangedListener,
     MediaPlayer.OnErrorListener,
     View.OnClickListener,
-    SeekBar.OnSeekBarChangeListener {
+    SeekBar.OnSeekBarChangeListener, CacheListener {
 
     public static final int CONTROLS_DELAY_MILLIS = 1000;
-    public static final int DELAYEWD_DELAY_MILLIS = 500;
+    public static final int DELAY_DELAY_MILLIS = 500;
     public static final int SHOW_INFO_DELAY_MILLIS = 10000;
+
+    @Override
+    public void onCacheAvailable(File cacheFile, String url, int percentsAvailable) {
+        String string="";
+    }
 
     @IntDef({LEFT_ACTION_NONE, LEFT_ACTION_RESTART, LEFT_ACTION_RETRY})
     @Retention(RetentionPolicy.SOURCE)
@@ -415,7 +424,9 @@ public class EasyVideoPlayer extends FrameLayout
         if (mSource.getScheme() != null
             && (mSource.getScheme().equals("http") || mSource.getScheme().equals("https"))) {
             LogUtils.w("Loading web URI: " + mSource.toString());
-            mPlayer.setDataSource(mSource.toString());
+            HttpProxyCacheServer proxy = BaseApplication.getProxy(getContext());
+            proxy.registerCacheListener(this, mSource.toString());
+            mPlayer.setDataSource(proxy.getProxyUrl(mSource.toString()));
         } else if (mSource.getScheme() != null
             && (mSource.getScheme().equals("file") && mSource.getPath().contains("/android_assets/"))) {
             LogUtils.w("Loading assets URI: " + mSource.toString());
@@ -1016,7 +1027,7 @@ public class EasyVideoPlayer extends FrameLayout
             public void run() {
                 videoStart();
             }
-        }, DELAYEWD_DELAY_MILLIS);
+        }, DELAY_DELAY_MILLIS);
     }
 
     @Override

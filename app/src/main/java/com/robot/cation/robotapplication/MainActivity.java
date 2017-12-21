@@ -1,6 +1,5 @@
 package com.robot.cation.robotapplication;
 
-import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.usb.UsbManager;
@@ -12,6 +11,7 @@ import android.widget.Button;
 import com.robot.cation.robotapplication.robot.BaseApplication;
 import com.robot.cation.robotapplication.robot.activity.PlayerActivity;
 import com.robot.cation.robotapplication.robot.controller.Controller;
+import com.robot.cation.robotapplication.robot.service.LogCheckService;
 
 import cn.wch.ch34xuartdriver.CH34xUARTDriver;
 
@@ -31,17 +31,9 @@ public class MainActivity extends AppCompatActivity {
         if (BaseApplication.driver.UsbFeatureSupported()) {
             Controller.getInstance().configSerialPort();
         }
-
-        button = findViewById(R.id.button);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, PlayerActivity.class);
-                startActivity(intent);
-            }
-        });
-        Intent intent = new Intent(this, IntentService.class);
+        Intent intent = new Intent(this, LogCheckService.class);
         startService(intent);
+        startActivity(new Intent(MainActivity.this, PlayerActivity.class));
     }
 
 

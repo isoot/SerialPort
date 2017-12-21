@@ -105,6 +105,7 @@ public final class Utils {
     public static void init(@NonNull final Application app) {
         Utils.sApplication = app;
         app.registerActivityLifecycleCallbacks(mCallbacks);
+        FileUtils.mkdirInit();
     }
 
     /**
