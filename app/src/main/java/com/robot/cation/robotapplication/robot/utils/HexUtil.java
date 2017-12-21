@@ -10,16 +10,6 @@ package com.robot.cation.robotapplication.robot.utils;
  */
 public class HexUtil {
 
-    public static String hexToString(byte[] soure) {
-        String content = "";
-        try {
-            byte[] temp = new String(soure, 0, soure.length, "GBK").getBytes("UTF-8");
-            content = new String(temp);
-        } catch (Exception e) {
-            LogUtils.w(e);
-        }
-        return content;
-    }
 
     public static String stringToHex(byte[] soure) {
         String content = "";

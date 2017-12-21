@@ -6,6 +6,8 @@ import android.app.Application;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
+import com.robot.cation.robotapplication.robot.controller.LocalDataManipulation;
+
 import java.lang.ref.WeakReference;
 import java.util.LinkedList;
 import java.util.List;
@@ -106,6 +108,7 @@ public final class Utils {
         Utils.sApplication = app;
         app.registerActivityLifecycleCallbacks(mCallbacks);
         FileUtils.mkdirInit();
+        LocalDataManipulation.getInstance();
     }
 
     /**

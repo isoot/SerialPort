@@ -5,7 +5,7 @@ import android.os.Handler;
 import android.os.Message;
 
 import com.robot.cation.robotapplication.robot.BaseApplication;
-import com.robot.cation.robotapplication.robot.utils.HexUtil;
+import com.robot.cation.robotapplication.robot.utils.BytesHexStrTranslate;
 import com.robot.cation.robotapplication.robot.utils.LogUtils;
 
 import java.util.Arrays;
@@ -60,13 +60,13 @@ public class ReadThread extends Thread {
 
     private String toHexString(byte[] arg, int length) {
         String result = null;
-        StringBuffer buffer = new StringBuffer();
         if (arg != null) {
             for (int i = 0; i < length; i++) {
                 LogUtils.w("原数据:" + Arrays.toString(arg));
                 byte[] temp = new byte[length];
                 System.arraycopy(arg, 0, temp, 0, length);
-                result = HexUtil.hexToString(temp);
+                byte[] bytes = BytesHexStrTranslate.GBK_UTF8(temp);
+                result = new String(bytes);
             }
             return result;
         }

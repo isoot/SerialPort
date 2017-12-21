@@ -80,7 +80,7 @@ public class EasyVideoPlayer extends FrameLayout
 
     @Override
     public void onCacheAvailable(File cacheFile, String url, int percentsAvailable) {
-        String string="";
+
     }
 
     @IntDef({LEFT_ACTION_NONE, LEFT_ACTION_RESTART, LEFT_ACTION_RETRY})
