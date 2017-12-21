@@ -9,7 +9,6 @@ import com.robot.cation.robotapplication.robot.robot.photoprint.PhotoPrintConfig
 import com.robot.cation.robotapplication.robot.robot.sensor.SensorConfig;
 import com.robot.cation.robotapplication.robot.robot.sharedchargingpoint.SharedChargingPointConfig;
 import com.robot.cation.robotapplication.robot.robot.teawithmilk.TeaWithMilkConfig;
-import com.robot.cation.robotapplication.robot.robot.tissue.TissueConfig;
 
 /**
  * 定义功能接口
@@ -61,9 +60,9 @@ public interface Robot {
     /**
      * 纸巾
      *
-     * @param config 纸巾配置
+     * @param tissueNumber 纸巾数量
      */
-    void tissue(TissueConfig config);
+    void tissue(int tissueNumber);
 
     /**
      * VR试衣服镜

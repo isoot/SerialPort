@@ -1,24 +1,32 @@
 package com.robot.cation.robotapplication.robot.utils;
 
-/**
- * ClassName: HexUtil <br/>
- * Function: 16进制字节数组与10进制字节数组转换工具类 <br/>
- * date: 2017年1月23日 下午10:58:17 <br/>
- *
- * @author JohnFNash
- * @since JDK 1.6
- */
+
 public class HexUtil {
 
 
-    public static String stringToHex(byte[] soure) {
-        String content = "";
-        try {
-            byte[] temp = new String(soure, 0, soure.length, "UTF-8").getBytes("GBK");
-            content = new String(temp);
-        } catch (Exception e) {
-            LogUtils.w(e);
-        }
-        return content;
+    public static byte intToByte(int x) {
+        return (byte) x;
+    }
+
+    public static int byteToInt(byte b) {
+        //Java 总是把 byte 当做有符处理；我们可以通过将其和 0xFF 进行二进制与得到它的无符值
+        return b & 0xFF;
+    }
+
+
+    public static int byteArrayToInt(byte[] b) {
+        return b[3] & 0xFF |
+            (b[2] & 0xFF) << 8 |
+            (b[1] & 0xFF) << 16 |
+            (b[0] & 0xFF) << 24;
+    }
+
+    public static byte[] intToByteArray(int a) {
+        return new byte[]{
+            (byte) ((a >> 24) & 0xFF),
+            (byte) ((a >> 16) & 0xFF),
+            (byte) ((a >> 8) & 0xFF),
+            (byte) (a & 0xFF)
+        };
     }
 }  
