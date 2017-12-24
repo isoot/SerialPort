@@ -51,7 +51,7 @@ public class RobotReceiver extends BroadcastReceiver {
                 LogUtils.w("RobotReceiver  Unhandled intent - " + intent.getAction());
             }
         } catch (Exception e) {
-            LogUtils.w(e.getLocalizedMessage());
+            LogUtils.w(e);
         }
     }
 

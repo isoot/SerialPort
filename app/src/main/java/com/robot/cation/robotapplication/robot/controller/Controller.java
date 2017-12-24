@@ -77,7 +77,6 @@ public class Controller {
                 LogUtils.w("打开设备成功!");
                 isOpen = true;
                 readThread.readStart(isOpen);//开启读线程读取串口接收的数据
-                writeThread.startWrite("1");
             } else {
                 LogUtils.w("未授权限 请核实");
             }
@@ -102,6 +101,14 @@ public class Controller {
             LogUtils.w("read data:" + (String) msg.obj);
         } else {
             //失败
+        }
+    }
+
+    public void writeMessage(byte[] message) {
+        if (isOpen) {
+            writeThread.startWrite(message);
+        } else {
+            LogUtils.w("设备未开启 发送失败");
         }
     }
 

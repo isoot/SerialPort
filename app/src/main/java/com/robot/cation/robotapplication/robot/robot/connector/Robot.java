@@ -62,7 +62,7 @@ public interface Robot {
      *
      * @param tissueNumber 纸巾数量
      */
-    void tissue(int tissueNumber);
+    void tissue(String tissueNumber);
 
     /**
      * VR试衣服镜

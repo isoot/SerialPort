@@ -8,5 +8,5 @@ public interface CallBack {
 
     void onSuccess(String body);
 
-    void  onError(String body);
+    void onError(String body);
 }

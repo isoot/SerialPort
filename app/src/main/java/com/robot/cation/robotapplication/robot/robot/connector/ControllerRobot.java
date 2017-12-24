@@ -34,6 +34,19 @@ public class ControllerRobot implements Robot {
     //咖啡机
     public static final int COFFEE_MAKER = 0x06;
 
+    private static ControllerRobot instance;
+
+    private ControllerRobot() {
+        // Do nothing
+    }
+
+    public static ControllerRobot getInstance() {
+        if (null == instance) {
+            instance = new ControllerRobot();
+        }
+        return instance;
+    }
+
     @Override
     public void iceCream(IceCreamConfig config) {
 
@@ -65,7 +78,7 @@ public class ControllerRobot implements Robot {
     }
 
     @Override
-    public void tissue(int tissueNumber) {
+    public void tissue(String tissueNumber) {
         Tissue.TissueStart(tissueNumber);
     }
 
@@ -83,4 +96,5 @@ public class ControllerRobot implements Robot {
     public void sensor(SensorConfig config) {
 
     }
+
 }
