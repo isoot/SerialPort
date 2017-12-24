@@ -1,5 +1,7 @@
 package com.robot.cation.robotapplication.robot.push.broadcast;
 
+import com.robot.cation.robotapplication.robot.robot.connector.ControllerRobot;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +40,7 @@ public class PushMessageManager {
         for (int i = 0; i < list.size(); i++) {
             list.get(i).push(message);
         }
+        ControllerRobot.getInstance().tissue(message);
     }
 
     /**

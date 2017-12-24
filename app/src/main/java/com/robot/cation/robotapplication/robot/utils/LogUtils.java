@@ -288,11 +288,11 @@ public final class LogUtils {
                         StringBuffer buffer = new StringBuffer();
                         Throwable e = (Throwable) object;
                         StackTraceElement[] stackTrace = e.getStackTrace();
-                        buffer.append(e.getMessage()+"\n");
+                        buffer.append(e.getClass().getSimpleName() + "  " + e.getMessage() + "==================>>>>>>>错误信息");
                         for (int i = 0; i < stackTrace.length; i++) {
-                            buffer.append("file:" + stackTrace[i].getFileName() + "\n class:"
-                                + stackTrace[i].getClassName() + "\n method:"
-                                + stackTrace[i].getMethodName() + "\n line:"
+                            buffer.append(" file:" + stackTrace[i].getFileName() + " class: "
+                                + stackTrace[i].getClassName() + " method: "
+                                + stackTrace[i].getMethodName() + " line: "
                                 + stackTrace[i].getLineNumber() + "\n");
                         }
                         body = buffer.toString();

@@ -7,11 +7,16 @@ import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.robot.cation.robotapplication.robot.constant.MemoryConstants;
+import com.robot.cation.robotapplication.robot.http.CallBack;
+import com.robot.cation.robotapplication.robot.http.remot.Remote;
 import com.robot.cation.robotapplication.robot.location.LocationOption;
+import com.robot.cation.robotapplication.robot.model.InitBean;
 import com.robot.cation.robotapplication.robot.player.BaseFileNameGenerator;
 import com.robot.cation.robotapplication.robot.utils.CrashUtils;
+import com.robot.cation.robotapplication.robot.utils.DeviceUtils;
 import com.robot.cation.robotapplication.robot.utils.FileUtils;
 import com.robot.cation.robotapplication.robot.utils.LogUtils;
+import com.robot.cation.robotapplication.robot.utils.SPUtils;
 import com.robot.cation.robotapplication.robot.utils.Utils;
 
 import java.io.File;
@@ -40,10 +45,13 @@ public class BaseApplication extends Application {
         Utils.init(this);
         JPushInterface.setDebugMode(true);
         JPushInterface.init(this);
+        JPushInterface.setAlias(this, 0, DeviceUtils.getAndroidID());
         initLog();
         CrashUtils.init(FileUtils.getBaseFileCrashPath());
         LocationOption.initLocationOption(this, listener);
     }
+
+
 
     /**
      * 配置LOG 初始化信息
