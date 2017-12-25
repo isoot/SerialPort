@@ -104,6 +104,18 @@ public class BytesHexStrTranslate {
         return temp;
     }
 
+    public static byte[] UTF8_US_ASCII(byte[] source) {
+        byte[] temp = new byte[0];
+        if (source != null) {
+            try {
+                temp = new String(source, 0, source.length).getBytes("US-ASCII");
+            } catch (UnsupportedEncodingException e) {
+                LogUtils.w(e);
+            }
+        }
+        return temp;
+    }
+
     public static byte[] GBK_UTF8(byte[] source) {
         byte[] temp = new byte[0];
         try {

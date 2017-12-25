@@ -14,7 +14,7 @@ import java.util.Arrays;
  * 读数据线程
  */
 public class ReadThread extends Thread {
-    private static final int READ_BYTE_SIZE = 500;
+    private static final int READ_BYTE_SIZE = 4096;
     public static final int READ_ERROR = 1;
     public static final int READ_SUCCEED = 2;
     private boolean canRead;
