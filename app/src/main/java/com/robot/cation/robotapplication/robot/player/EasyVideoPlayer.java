@@ -1219,4 +1219,7 @@ public class EasyVideoPlayer extends FrameLayout
         }
     }
 
+    public Uri getmSource() {
+        return mSource;
+    }
 }

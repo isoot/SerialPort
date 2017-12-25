@@ -18,6 +18,7 @@ import com.robot.cation.robotapplication.robot.service.LogCheckService;
 import com.robot.cation.robotapplication.robot.utils.DeviceUtils;
 import com.robot.cation.robotapplication.robot.utils.LogUtils;
 import com.robot.cation.robotapplication.robot.utils.SPUtils;
+import com.robot.cation.robotapplication.robot.utils.ServiceUtils;
 
 import cn.wch.ch34xuartdriver.CH34xUARTDriver;
 
@@ -32,18 +33,24 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ch34();
+        logServer();
+        initView();
+        remoteInit();
+    }
+
+    private void logServer() {
+        ServiceUtils.startService(LogCheckService.class);
+    }
+
+    private void ch34() {
         BaseApplication.driver = new CH34xUARTDriver(
             (UsbManager) getSystemService(Context.USB_SERVICE), getApplicationContext(),
             ACTION_USB_PERMISSION);
         // 判断系统是否支持USB HOST
         if (BaseApplication.driver.UsbFeatureSupported()) {
-            Controller.getInstance().configSerialPort();
+            Controller.configSerialPort();
         }
-        Intent intent = new Intent(this, LogCheckService.class);
-        startService(intent);
-
-        initView();
-        remoteInit();
     }
 
     /**
@@ -79,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, PlayerActivity.class));
             }
         });
+
     }
 
     @Override

@@ -5,14 +5,6 @@ package com.robot.cation.robotapplication.robot.push.bean;
  */
 
 public class OrderGoodsBean {
-    /**
-     * orderId : 4
-     * goodsId : 5
-     * goodsNumber : 01
-     * count : 1
-     * functionNumber : 02
-     */
-
     private int orderId;
     private int goodsId;
     private String goodsNumber;

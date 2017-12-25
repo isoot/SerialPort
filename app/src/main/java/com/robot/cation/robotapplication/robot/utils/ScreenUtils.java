@@ -7,13 +7,12 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.util.DisplayMetrics;
 import android.view.Surface;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 
 /**
  * 屏幕相关工具类
@@ -61,15 +60,21 @@ public final class ScreenUtils {
     }
 
     /**
-     * 设置屏幕为全屏
-     * <p>需在 {@code setContentView} 之前调用</p>
+     * 隐藏虚拟按键，并且全屏
      *
      * @param activity activity
      */
     public static void setFullScreen(@NonNull final Activity activity) {
-        activity.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB && Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) { // lower api
+            View v = activity.getWindow().getDecorView();
+            v.setSystemUiVisibility(View.GONE);
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            //for new api versions.
+            View decorView = activity.getWindow().getDecorView();
+            int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN;
+            decorView.setSystemUiVisibility(uiOptions);
+        }
     }
 
     /**

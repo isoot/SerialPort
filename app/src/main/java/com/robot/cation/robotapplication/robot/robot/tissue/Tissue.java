@@ -11,16 +11,17 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
+import static com.robot.cation.robotapplication.robot.robot.connector.ControllerRobot.ADDRESS_SIZE;
+import static com.robot.cation.robotapplication.robot.robot.connector.ControllerRobot.COVERING_POSITION;
+import static com.robot.cation.robotapplication.robot.robot.connector.ControllerRobot.DATA_LENGTH;
+import static com.robot.cation.robotapplication.robot.robot.connector.ControllerRobot.END_SIZE;
+import static com.robot.cation.robotapplication.robot.robot.connector.ControllerRobot.FUNCTION_CODE_SIZE;
+import static com.robot.cation.robotapplication.robot.robot.connector.ControllerRobot.HEAD_SIZE;
+import static com.robot.cation.robotapplication.robot.robot.connector.ControllerRobot.TISSUE_SIZE;
+import static com.robot.cation.robotapplication.robot.robot.connector.ControllerRobot.UNSIGNED_MAX_VALUE;
+
 
 public class Tissue {
-
-    public static final int UNSIGNED_MAX_VALUE = 127;
-    public static final int COVERING_POSITION = 1;
-    public static final int HEAD_SIZE = 2;
-    public static final int ADDRESS_SIZE = 1;
-    public static final int FUNCTION_CODE_SIZE = 1;
-    public static final int DATA_LENGTH = 1;
-    public static final int END_SIZE = 2;
 
     public static void TissueStart(String data) {
 
@@ -30,6 +31,7 @@ public class Tissue {
         byte[] length = new byte[DATA_LENGTH];
         byte[] end = new byte[END_SIZE];
 
+        byte[] data_byte = new byte[TISSUE_SIZE];
         byte[] data_head = HexUtil.intToByteArray(ControllerRobot.DATA_HEAD);
         head[0] = data_head[2];
         head[1] = data_head[3];
@@ -42,7 +44,7 @@ public class Tissue {
         end[0] = data_end[2];
         end[1] = data_end[3];
 
-        byte[] data_byte = HexUtil.intToByteArray(Integer.parseInt(data));
+        data_byte[0] = HexUtil.intToByteArray(Integer.parseInt(data))[3];
 
         length[0] = HexUtil.intToByteArray(CRC16X25Util.concatAll(head, address, functionCode, length, data_byte, end).length)[3];
 
@@ -55,15 +57,16 @@ public class Tissue {
 
         LogUtils.w("CRC校验之后的有符号数据:" + Arrays.toString(submit));
 
-        submit = unsignedByte(submit);
+//        submit = unsignedByte(submit);
 
-        LogUtils.w("CRC校验之后的无符号数据:" + Arrays.toString(submit));
+//        LogUtils.w("CRC校验之后的无符号数据:" + Arrays.toString(submit));
 
-        Controller.getInstance().writeMessage(submit);
+        Controller.startWrite(submit);
     }
 
     /**
      * 转无符号byte
+     *
      * @param submit
      * @return
      */
