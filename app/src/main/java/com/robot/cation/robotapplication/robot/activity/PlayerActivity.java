@@ -52,6 +52,14 @@ public class PlayerActivity extends AppCompatActivity implements EasyVideoCallba
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (!player.isPlaying()) {
+            player.videoStart();
+        }
+    }
+
+    @Override
     public void onStarted(EasyVideoPlayer player) {
     }
 
@@ -149,13 +157,13 @@ public class PlayerActivity extends AppCompatActivity implements EasyVideoCallba
     public void onGlobalLayout() {
         // Do nothing
     }
-    
-    private void upDataPlayer(){
+
+    private void upDataPlayer() {
         //获取需要播放的结合
         List<PlayerVideoUrl> playerVideoUrls = LocalDataManipulation.getInstance().queryPlayerVideoUrlAll();
         //筛选集合
-        for (PlayerVideoUrl url: playerVideoUrls) {
-           //删除多余的数据
+        for (PlayerVideoUrl url : playerVideoUrls) {
+            //删除多余的数据
             //并且移除缓存
 //            BaseApplication.getProxy(this).isCached()
         }
