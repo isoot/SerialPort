@@ -85,7 +85,7 @@ public final class CRC16X25Util {
     private static int calcCRC(byte[] buf, int offset, int crcLen) {
         int crc_reg = 0xFFFF;
         int start = offset;
-        int end = offset + crcLen;
+        int end = buf.length - crcLen;
         for (int index = start; index < end; index++) {
             crc_reg = (crc_reg >> 8) ^ CRC16_CCITT_TABLE[(crc_reg ^ buf[index]) & 0xFF];
         }

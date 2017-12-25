@@ -1,4 +1,4 @@
-package com.robot.cation.robotapplication.robot.controller;
+package com.robot.cation.robotapplication.robot.http.locality;
 
 import com.robot.cation.robotapplication.robot.greenbean.DaoMaster;
 import com.robot.cation.robotapplication.robot.greenbean.DaoSession;

@@ -34,6 +34,14 @@ public class ControllerRobot implements Robot {
     //咖啡机
     public static final int COFFEE_MAKER = 0x06;
 
+    public static final int UNSIGNED_MAX_VALUE = 127;
+    public static final int COVERING_POSITION = 1;
+    public static final int HEAD_SIZE = 2;
+    public static final int ADDRESS_SIZE = 1;
+    public static final int FUNCTION_CODE_SIZE = 1;
+    public static final int DATA_LENGTH = 1;
+    public static final int END_SIZE = 2;
+    public static final int TISSUE_SIZE = 1;
     private static ControllerRobot instance;
 
     private ControllerRobot() {

@@ -1,21 +1,13 @@
 package com.robot.cation.robotapplication.robot.push.bean;
 
+
 /**
- * Created by THINK on 2017/12/23.
+ * 推送基础bean
  */
-
 public class PushBean {
-
-    /**
-     * status : 1
-     * msg : 发送订单信息
-     * data :
-     * code : 1
-     */
-
     private int status;
     private String msg;
-    private TissueBean data;
+    private String data;
     private int code;
 
     public int getStatus() {
@@ -34,11 +26,11 @@ public class PushBean {
         this.msg = msg;
     }
 
-    public TissueBean getData() {
+    public String getData() {
         return data;
     }
 
-    public void setData(TissueBean data) {
+    public void setData(String data) {
         this.data = data;
     }
 
