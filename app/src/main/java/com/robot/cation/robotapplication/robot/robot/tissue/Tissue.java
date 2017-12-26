@@ -5,20 +5,17 @@ import com.robot.cation.robotapplication.robot.crc.CRC16X25Util;
 import com.robot.cation.robotapplication.robot.robot.connector.ControllerRobot;
 import com.robot.cation.robotapplication.robot.utils.HexUtil;
 import com.robot.cation.robotapplication.robot.utils.LogUtils;
+import com.robot.cation.robotapplication.robot.utils.StringUtils;
+import com.robot.cation.robotapplication.robot.utils.ToastUtils;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
 import java.util.Arrays;
 
 import static com.robot.cation.robotapplication.robot.robot.connector.ControllerRobot.ADDRESS_SIZE;
-import static com.robot.cation.robotapplication.robot.robot.connector.ControllerRobot.COVERING_POSITION;
 import static com.robot.cation.robotapplication.robot.robot.connector.ControllerRobot.DATA_LENGTH;
 import static com.robot.cation.robotapplication.robot.robot.connector.ControllerRobot.END_SIZE;
 import static com.robot.cation.robotapplication.robot.robot.connector.ControllerRobot.FUNCTION_CODE_SIZE;
 import static com.robot.cation.robotapplication.robot.robot.connector.ControllerRobot.HEAD_SIZE;
 import static com.robot.cation.robotapplication.robot.robot.connector.ControllerRobot.TISSUE_SIZE;
-import static com.robot.cation.robotapplication.robot.robot.connector.ControllerRobot.UNSIGNED_MAX_VALUE;
 
 
 public class Tissue {
@@ -44,6 +41,10 @@ public class Tissue {
         end[0] = data_end[2];
         end[1] = data_end[3];
 
+        if(!StringUtils.isNumeric(data)){
+            ToastUtils.showShort("请输入数字 thank you!");
+            return;
+        }
         data_byte[0] = HexUtil.intToByteArray(Integer.parseInt(data))[3];
 
         length[0] = HexUtil.intToByteArray(CRC16X25Util.concatAll(head, address, functionCode, length, data_byte, end).length)[3];
@@ -64,27 +65,6 @@ public class Tissue {
         Controller.startWrite(submit);
     }
 
-    /**
-     * 转无符号byte
-     *
-     * @param submit
-     * @return
-     */
-    private static byte[] unsignedByte(byte[] submit) {
-        DataInputStream stream = new DataInputStream(new ByteArrayInputStream(submit));
-        for (int i = 0; i < submit.length; i++) {
-            try {
-                int int_value = stream.readUnsignedByte();
-                if (int_value > UNSIGNED_MAX_VALUE) {
-                    submit[i] = (byte) (~int_value + COVERING_POSITION);
-                } else {
-                    submit[i] = (byte) int_value;
-                }
-            } catch (IOException e) {
 
-            }
-        }
-        return submit;
-    }
 
 }

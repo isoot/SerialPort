@@ -86,7 +86,9 @@ public class Controller {
                     int length = BaseApplication.driver.ReadData(buffer, READ_BYTE_SIZE);
                     if (length > 0) {
                         //合并上一次遗留的数据
-                        buffer = CRC16X25Util.concatAll(buffer, redundantData.get(0));
+                        if (redundantData.size() > 0) {
+                            buffer = CRC16X25Util.concatAll(buffer, redundantData.get(0));
+                        }
                         toHexString(buffer, length);
                     } else {
                         redundantData.clear();
@@ -114,9 +116,13 @@ public class Controller {
             //补成四个字节的数据
             byte[] int_len = new byte[]{0, 0, 0, len[0]};
             int dataLength = HexUtil.byteArrayToInt(int_len);
+            if (dataLength == 0) {
+                break;
+            }
             int packageLength = dataLength + END_SIZE;
             byte[] packageData = Arrays.copyOfRange(arg, 0, packageLength);
             //CRC校验部分
+            LogUtils.w("接收到单片机数据:" + Arrays.toString(packageData));
             boolean passCRC = CRC16X25Util.isPassCRC(packageData, dataLength);
             if (passCRC) {
                 //校验通过
@@ -152,6 +158,7 @@ public class Controller {
                 //byte[] to_send = BytesHexStrTranslate.UTF8_GBK(content);//ff fe 02 01 0b 00 00 00 01 fe ff 0c a3
                 LogUtils.e("发送数据:" + Arrays.toString(content));
                 int real = BaseApplication.driver.WriteData(content, content.length);//写数据，第一个参数为需要发送的字节数组，第二个参数为需要发送的字节长度，返回实际发送的字节长度
+                e.onComplete();
             }
         }).subscribeOn(Schedulers.newThread())
             .observeOn(AndroidSchedulers.mainThread())

@@ -1,7 +1,9 @@
 package com.robot.cation.robotapplication.robot.utils;
 
+import java.util.regex.Pattern;
+
 /**
- *字符串相关工具类
+ * 字符串相关工具类
  */
 public final class StringUtils {
 
@@ -181,5 +183,59 @@ public final class StringUtils {
             }
         }
         return new String(chars);
+    }
+
+    /**
+     * 判断是否是数字
+     *
+     * @param str
+     * @return
+     */
+    public static boolean isNumeric(String str) {
+        for (int i = str.length(); --i >= 0; ) {
+            if (!Character.isDigit(str.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+
+    }
+
+    /**
+     * 用正则表达式
+     *
+     * @param str
+     * @return
+     */
+
+    public static boolean isNumeric2(String str) {
+
+        Pattern pattern = Pattern.compile("[0-9]*");
+
+        return pattern.matcher(str).matches();
+
+    }
+
+    /**
+     * 用ascii码
+     *
+     * @param str
+     * @return
+     */
+
+    public static boolean isNumeric3(String str) {
+
+        for (int i = str.length(); --i >= 0; ) {
+
+            int chr = str.charAt(i);
+
+            if (chr < 48 || chr > 57)
+
+                return false;
+
+        }
+
+        return true;
+
     }
 }
