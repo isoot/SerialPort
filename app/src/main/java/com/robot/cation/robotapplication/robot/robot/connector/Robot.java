@@ -7,8 +7,6 @@ import com.robot.cation.robotapplication.robot.robot.led.LedConfig;
 import com.robot.cation.robotapplication.robot.robot.lottery.LotteryConfig;
 import com.robot.cation.robotapplication.robot.robot.photoprint.PhotoPrintConfig;
 import com.robot.cation.robotapplication.robot.robot.sensor.SensorConfig;
-import com.robot.cation.robotapplication.robot.robot.sharedchargingpoint.SharedChargingPointConfig;
-import com.robot.cation.robotapplication.robot.robot.teawithmilk.TeaWithMilkConfig;
 
 /**
  * 定义功能接口
@@ -32,9 +30,9 @@ public interface Robot {
     /**
      * 奶茶
      *
-     * @param config 奶茶配置
+     * @param data
      */
-    void teaWithMilk(TeaWithMilkConfig config);
+    void teaWithMilk(String data);
 
     /**
      * 彩票
@@ -53,9 +51,9 @@ public interface Robot {
     /**
      * 共享充电宝
      *
-     * @param config 共享充电宝配置
+     * @param tissueNumber
      */
-    void sharedChargingPoint(SharedChargingPointConfig config);
+    void sharedChargingPoint(String tissueNumber);
 
     /**
      * 纸巾

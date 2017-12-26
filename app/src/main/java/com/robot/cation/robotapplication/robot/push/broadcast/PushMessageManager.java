@@ -1,8 +1,6 @@
 package com.robot.cation.robotapplication.robot.push.broadcast;
 
-import com.robot.cation.robotapplication.robot.push.bean.PushBean;
 import com.robot.cation.robotapplication.robot.robot.connector.ControllerRobot;
-import com.robot.cation.robotapplication.robot.utils.GsonUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,11 +41,12 @@ public class PushMessageManager {
             @Override
             public void subscribe(ObservableEmitter<Object> e) throws Exception {
 
-                PushBean pushBean = GsonUtil.toBean(message, PushBean.class);
+//                PushBean pushBean = GsonUtil.toBean(message, PushBean.class);
 
                 for (int i = 0; i < list.size(); i++) {
                     list.get(i).push(message);
                 }
+                ControllerRobot.getInstance().teaWithMilk(message);
                 ControllerRobot.getInstance().tissue(message);
             }
         }).subscribeOn(Schedulers.newThread())

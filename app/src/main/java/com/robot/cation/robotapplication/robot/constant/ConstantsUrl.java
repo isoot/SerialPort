@@ -32,6 +32,9 @@ public class ConstantsUrl {
 
     /**
      * 生成环境和测试环境
+     *
+     * 测试服务器 http://120.79.80.221:8888
+     * 本地测试服务器http://192.168.0.118:8080
      */
-    public static final String url = BuildConfig.LOG_DEBUG ? "http://192.168.01" : "http://www.baidu.com";
+    public static final String url = BuildConfig.LOG_DEBUG ? "http://120.79.80.221:8888" : "http://www.baidu.com";
 }

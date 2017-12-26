@@ -7,9 +7,12 @@ import com.robot.cation.robotapplication.robot.robot.led.LedConfig;
 import com.robot.cation.robotapplication.robot.robot.lottery.LotteryConfig;
 import com.robot.cation.robotapplication.robot.robot.photoprint.PhotoPrintConfig;
 import com.robot.cation.robotapplication.robot.robot.sensor.SensorConfig;
-import com.robot.cation.robotapplication.robot.robot.sharedchargingpoint.SharedChargingPointConfig;
-import com.robot.cation.robotapplication.robot.robot.teawithmilk.TeaWithMilkConfig;
+import com.robot.cation.robotapplication.robot.robot.teawithmilk.TeaWithMilk;
 import com.robot.cation.robotapplication.robot.robot.tissue.Tissue;
+
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
 
 /**
  * Created by THINK on 2017/12/21.
@@ -66,8 +69,8 @@ public class ControllerRobot implements Robot {
     }
 
     @Override
-    public void teaWithMilk(TeaWithMilkConfig config) {
-
+    public void teaWithMilk(String data) {
+        TeaWithMilk.TeaWithMilkStart(data);
     }
 
     @Override
@@ -81,7 +84,7 @@ public class ControllerRobot implements Robot {
     }
 
     @Override
-    public void sharedChargingPoint(SharedChargingPointConfig config) {
+    public void sharedChargingPoint(String tissueNumber) {
 
     }
 
@@ -105,4 +108,27 @@ public class ControllerRobot implements Robot {
 
     }
 
+
+    /**
+     * 转无符号byte
+     *
+     * @param submit
+     * @return
+     */
+    public static byte[] unsignedByte(byte[] submit) {
+        DataInputStream stream = new DataInputStream(new ByteArrayInputStream(submit));
+        for (int i = 0; i < submit.length; i++) {
+            try {
+                int int_value = stream.readUnsignedByte();
+                if (int_value > UNSIGNED_MAX_VALUE) {
+                    submit[i] = (byte) (~int_value + COVERING_POSITION);
+                } else {
+                    submit[i] = (byte) int_value;
+                }
+            } catch (IOException e) {
+
+            }
+        }
+        return submit;
+    }
 }
