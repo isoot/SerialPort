@@ -32,7 +32,7 @@ public interface Robot {
      *
      * @param data
      */
-    void teaWithMilk(String data);
+    void teaWithMilk(int data);
 
     /**
      * 彩票
@@ -60,7 +60,7 @@ public interface Robot {
      *
      * @param tissueNumber 纸巾数量
      */
-    void tissue(String tissueNumber);
+    void tissue(int tissueNumber);
 
     /**
      * VR试衣服镜

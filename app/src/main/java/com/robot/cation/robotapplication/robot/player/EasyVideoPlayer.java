@@ -50,15 +50,19 @@ import com.danikula.videocache.CacheListener;
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.robot.cation.robotapplication.R;
 import com.robot.cation.robotapplication.robot.BaseApplication;
+import com.robot.cation.robotapplication.robot.push.bean.PushBean;
+import com.robot.cation.robotapplication.robot.robot.connector.ControllerRobot;
 import com.robot.cation.robotapplication.robot.utils.AppUtils;
 import com.robot.cation.robotapplication.robot.utils.LogUtils;
 import com.robot.cation.robotapplication.robot.utils.PlayerUtil;
 import com.robot.cation.robotapplication.robot.utils.ScreenUtils;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.List;
 
 /**
  * @author Aidan Follestad (afollestad)
@@ -76,7 +80,7 @@ public class EasyVideoPlayer extends FrameLayout
 
     public static final int CONTROLS_DELAY_MILLIS = 1000;
     public static final int DELAY_DELAY_MILLIS = 500;
-    public static final int SHOW_INFO_DELAY_MILLIS = 10000;
+    public static final int SHOW_INFO_DELAY_MILLIS = 30000;
 
     @Override
     public void onCacheAvailable(File cacheFile, String url, int percentsAvailable) {
@@ -573,23 +577,60 @@ public class EasyVideoPlayer extends FrameLayout
 
     /**
      * show order form info
+     *
+     * @param pushBean
      */
-    public void showOrderForm(final String message) {
+    public void showOrderForm(final PushBean pushBean) {
         if (AppUtils.isMainThread()) {
-            showInfo(message);
+            showInfo(pushBean);
         } else {
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    showInfo(message);
+                    showInfo(pushBean);
                 }
             });
         }
     }
 
-    private void showInfo(String message) {
-        mShowInfo.setText(message);
+    private void showInfo(PushBean pushBean) {
+        mShowInfo.setText("");
         showInfo();
+        de.hdodenhof.circleimageview.CircleImageView headPortrait = mShowInfoFrame.findViewById(R.id.head_portrait);
+        Picasso.with(getContext()).load(pushBean.getData().getHeadImg()).into(headPortrait);
+        TextView name = mShowInfoFrame.findViewById(R.id.tv_name);
+        TextView orderId = mShowInfoFrame.findViewById(R.id.order_id);
+        TextView goods = mShowInfoFrame.findViewById(R.id.goods);
+        orderId.setText(String.valueOf(pushBean.getData().getOrderId()));
+        name.setText(pushBean.getData().getNikeName());
+        List<PushBean.DataBean.OrderGoodsBean> orderGoods = pushBean.getData().getOrderGoods();
+        goods.setText("");
+        for (int i = 0; i < orderGoods.size(); i++) {
+            PushBean.DataBean.OrderGoodsBean orderGoodsBean = orderGoods.get(i);
+            goods.append(orderGoodsBean.getFunctionNumber() + ControllerRobot.getName(Integer.valueOf(orderGoodsBean.getFunctionNumber())) + " , ");
+        }
+
+
+        mHandler.removeCallbacks(hintInfoRunnable);
+        mHandler.postDelayed(hintInfoRunnable, SHOW_INFO_DELAY_MILLIS * 8);
+    }
+
+
+    public void showOtherInfo(final CharSequence message) {
+        if (AppUtils.isMainThread()) {
+            mShowInfo.append(message);
+        } else {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mShowInfo.append(message);
+                }
+            });
+        }
+    }
+
+
+    public void hintInfoDelay() {
         mHandler.removeCallbacks(hintInfoRunnable);
         mHandler.postDelayed(hintInfoRunnable, SHOW_INFO_DELAY_MILLIS);
     }
@@ -951,7 +992,7 @@ public class EasyVideoPlayer extends FrameLayout
                 });
         }
 
-        mShowInfo = (TextView) mShowInfoFrame.findViewById(R.id.tv_show_info);
+        mShowInfo = (TextView) mShowInfoFrame.findViewById(R.id.order_info);
 
         // Retrieve controls
         mSeeker = (SeekBar) mControlsFrame.findViewById(R.id.seeker);

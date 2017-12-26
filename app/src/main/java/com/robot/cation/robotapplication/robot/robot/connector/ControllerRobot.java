@@ -69,7 +69,7 @@ public class ControllerRobot implements Robot {
     }
 
     @Override
-    public void teaWithMilk(String data) {
+    public void teaWithMilk(int data) {
         TeaWithMilk.TeaWithMilkStart(data);
     }
 
@@ -89,7 +89,7 @@ public class ControllerRobot implements Robot {
     }
 
     @Override
-    public void tissue(String tissueNumber) {
+    public void tissue(int tissueNumber) {
         Tissue.TissueStart(tissueNumber);
     }
 
@@ -130,5 +130,30 @@ public class ControllerRobot implements Robot {
             }
         }
         return submit;
+    }
+
+    public static String getName(int id) {
+        String str = "";
+        switch (id) {
+            case MILK_TEA_MACHINE:
+                str = "杯奶茶";
+                break;
+            case PAPER_TOWEL_MACHINE:
+                str = "个纸巾";
+                break;
+            case ICE_CREAM_MACHINE:
+                str = "个冰淇淋";
+                break;
+            case POWER_BANK:
+                str = "个充电宝";
+                break;
+            case COFFEE_MAKER:
+                str = "杯咖啡";
+                break;
+            case ADVISEMENT_PLAYER:
+                str = "条广告";
+                break;
+        }
+        return str;
     }
 }

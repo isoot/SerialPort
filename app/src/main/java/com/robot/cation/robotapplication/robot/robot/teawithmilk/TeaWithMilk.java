@@ -3,11 +3,8 @@ package com.robot.cation.robotapplication.robot.robot.teawithmilk;
 import com.robot.cation.robotapplication.robot.controller.Controller;
 import com.robot.cation.robotapplication.robot.crc.CRC16X25Util;
 import com.robot.cation.robotapplication.robot.robot.connector.ControllerRobot;
-import com.robot.cation.robotapplication.robot.robot.tissue.TissueConfig;
 import com.robot.cation.robotapplication.robot.utils.HexUtil;
 import com.robot.cation.robotapplication.robot.utils.LogUtils;
-import com.robot.cation.robotapplication.robot.utils.StringUtils;
-import com.robot.cation.robotapplication.robot.utils.ToastUtils;
 
 import java.util.Arrays;
 
@@ -24,7 +21,7 @@ import static com.robot.cation.robotapplication.robot.robot.connector.Controller
 
 public class TeaWithMilk {
 
-    public static void TeaWithMilkStart(String data) {
+    public static void TeaWithMilkStart(int data) {
         byte[] head = new byte[HEAD_SIZE];
         byte[] address = new byte[ADDRESS_SIZE];
         byte[] functionCode = new byte[FUNCTION_CODE_SIZE];
@@ -38,16 +35,12 @@ public class TeaWithMilk {
 
         address[0] = HexUtil.intToByteArray(ControllerRobot.MILK_TEA_MACHINE)[3];
 
-        functionCode[0] = HexUtil.intToByteArray((int) TissueConfig.tissueConfig.get("function_code"))[3];
+        functionCode[0] = HexUtil.intToByteArray((int) TeaWithMilkConfig.teaWithMilkConfig.get("fruit_juice"))[3];
 
         byte[] data_end = HexUtil.intToByteArray(ControllerRobot.DATA_END);
         end[0] = data_end[2];
         end[1] = data_end[3];
-        if(!StringUtils.isNumeric(data)){
-            ToastUtils.showShort("请输入数字 thank you!");
-            return;
-        }
-        data_byte[0] = HexUtil.intToByteArray(Integer.parseInt(data))[3];
+        data_byte[0] = HexUtil.intToByteArray(data)[3];
 
         length[0] = HexUtil.intToByteArray(CRC16X25Util.concatAll(head, address, functionCode, length, data_byte, end).length)[3];
 
@@ -64,7 +57,7 @@ public class TeaWithMilk {
 
 //        LogUtils.w("CRC校验之后的无符号数据:" + Arrays.toString(submit));
 
-        Controller.startWrite(submit);
+        Controller.startWrite(submit, ControllerRobot.MILK_TEA_MACHINE, "您的奶茶正在制作中请稍后\n");
     }
 
 
