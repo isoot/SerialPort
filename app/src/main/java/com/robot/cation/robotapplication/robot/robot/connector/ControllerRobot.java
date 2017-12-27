@@ -1,13 +1,8 @@
 package com.robot.cation.robotapplication.robot.robot.connector;
 
-import com.robot.cation.robotapplication.robot.robot.coffee.CoffeeConfig;
-import com.robot.cation.robotapplication.robot.robot.dressingmirror.DressingMirrorConfig;
-import com.robot.cation.robotapplication.robot.robot.icecream.IceCreamConfig;
-import com.robot.cation.robotapplication.robot.robot.led.LedConfig;
-import com.robot.cation.robotapplication.robot.robot.lottery.LotteryConfig;
-import com.robot.cation.robotapplication.robot.robot.photoprint.PhotoPrintConfig;
-import com.robot.cation.robotapplication.robot.robot.sensor.SensorConfig;
+import com.robot.cation.robotapplication.robot.robot.sharedchargingpoint.SharedChargingPointConfig;
 import com.robot.cation.robotapplication.robot.robot.teawithmilk.TeaWithMilk;
+import com.robot.cation.robotapplication.robot.robot.teawithmilk.TeaWithMilkConfig;
 import com.robot.cation.robotapplication.robot.robot.tissue.Tissue;
 
 import java.io.ByteArrayInputStream;
@@ -60,27 +55,27 @@ public class ControllerRobot implements Robot {
     }
 
     @Override
-    public void iceCream(IceCreamConfig config) {
+    public void iceCream(String config) {
 
     }
 
     @Override
-    public void coffee(CoffeeConfig config) {
+    public void coffee(String config) {
 
     }
 
     @Override
-    public void teaWithMilk(int data) {
-        TeaWithMilk.TeaWithMilkStart(data);
+    public void teaWithMilk(int functionNumber, int goodsNumber) {
+        TeaWithMilk.TeaWithMilkStart(functionNumber, goodsNumber);
     }
 
     @Override
-    public void lottery(LotteryConfig config) {
+    public void lottery(String config) {
 
     }
 
     @Override
-    public void photoPrint(PhotoPrintConfig config) {
+    public void photoPrint(String config) {
 
     }
 
@@ -90,22 +85,22 @@ public class ControllerRobot implements Robot {
     }
 
     @Override
-    public void tissue(int tissueNumber) {
-        Tissue.TissueStart(tissueNumber);
+    public void tissue(int functionNumber, int goodsNumber) {
+        Tissue.TissueStart(functionNumber, goodsNumber);
     }
 
     @Override
-    public void vrDressingMirror(DressingMirrorConfig config) {
+    public void vrDressingMirror(String config) {
+//        DressingMirror.dressingMirrorStart(config);
+    }
+
+    @Override
+    public void led(String config) {
 
     }
 
     @Override
-    public void led(LedConfig config) {
-
-    }
-
-    @Override
-    public void sensor(SensorConfig config) {
+    public void sensor(String config) {
 
     }
 
@@ -133,11 +128,11 @@ public class ControllerRobot implements Robot {
         return submit;
     }
 
-    public static String getName(int id) {
+    public static String getName(int functionNumber, int goodsNumber) {
         String str = "";
-        switch (id) {
+        switch (functionNumber) {
             case MILK_TEA_MACHINE:
-                str = "杯奶茶";
+                str = "杯奶茶(" + TeaWithMilkConfig.teaWithMilkConfig.get(goodsNumber) + ")";
                 break;
             case PAPER_TOWEL_MACHINE:
                 str = "个纸巾";
@@ -146,7 +141,7 @@ public class ControllerRobot implements Robot {
                 str = "个冰淇淋";
                 break;
             case POWER_BANK:
-                str = "个充电宝";
+                str = "个充电宝(" + SharedChargingPointConfig.sharedChargingPointConfig.get(goodsNumber) + ")";
                 break;
             case COFFEE_MAKER:
                 str = "杯咖啡";

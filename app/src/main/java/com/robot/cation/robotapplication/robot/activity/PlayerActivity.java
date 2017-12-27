@@ -18,8 +18,6 @@ public class PlayerActivity extends AppCompatActivity {
 
     public static final int DELAY_MILLIS = 1000;
     private EasyVideoPlayer player;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,7 +55,6 @@ public class PlayerActivity extends AppCompatActivity {
             }
         });
     }
-
 
     @Override
     protected void onPause() {

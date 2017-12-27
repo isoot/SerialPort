@@ -21,7 +21,7 @@ import static com.robot.cation.robotapplication.robot.robot.connector.Controller
 
 public class TeaWithMilk {
 
-    public static void TeaWithMilkStart(int data) {
+    public static void TeaWithMilkStart(int functionNumber, int goodsNumber) {
         byte[] head = new byte[HEAD_SIZE];
         byte[] address = new byte[ADDRESS_SIZE];
         byte[] functionCode = new byte[FUNCTION_CODE_SIZE];
@@ -35,12 +35,12 @@ public class TeaWithMilk {
 
         address[0] = HexUtil.intToByteArray(ControllerRobot.MILK_TEA_MACHINE)[3];
 
-        functionCode[0] = HexUtil.intToByteArray((int) TeaWithMilkConfig.teaWithMilkConfig.get("fruit_juice"))[3];
+        functionCode[0] = HexUtil.intToByteArray(goodsNumber)[3];
 
         byte[] data_end = HexUtil.intToByteArray(ControllerRobot.DATA_END);
         end[0] = data_end[2];
         end[1] = data_end[3];
-        data_byte[0] = HexUtil.intToByteArray(data)[3];
+        data_byte[0] = HexUtil.intToByteArray(functionNumber)[3];
 
         length[0] = HexUtil.intToByteArray(CRC16X25Util.concatAll(head, address, functionCode, length, data_byte, end).length)[3];
 

@@ -50,6 +50,7 @@ import com.danikula.videocache.CacheListener;
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.robot.cation.robotapplication.R;
 import com.robot.cation.robotapplication.robot.BaseApplication;
+import com.robot.cation.robotapplication.robot.baidu.BaiduTTS;
 import com.robot.cation.robotapplication.robot.controller.ReceiveController;
 import com.robot.cation.robotapplication.robot.push.bean.PushBean;
 import com.robot.cation.robotapplication.robot.push.broadcast.PushMessageManager;
@@ -607,6 +608,7 @@ public class EasyVideoPlayer extends FrameLayout
     private PushBean pushBean;
 
     private void showInfo(PushBean pushBean) {
+        //TODO
         this.pushBean = pushBean;
         mShowInfo.setText("");
         nextOrder.removeAllViews();
@@ -622,10 +624,10 @@ public class EasyVideoPlayer extends FrameLayout
         goods.setText("");
         for (int i = 0; i < orderGoods.size(); i++) {
             PushBean.DataBean.OrderGoodsBean orderGoodsBean = orderGoods.get(i);
-            goods.append(orderGoodsBean.getFunctionNumber() + ControllerRobot.getName(Integer.valueOf(orderGoodsBean.getFunctionNumber())) + " , ");
+            goods.append(orderGoodsBean.getCount() + ControllerRobot.getName(orderGoodsBean.getFunctionNumber(), orderGoodsBean.getGoodsNumber()) + " , ");
         }
 
-
+        BaiduTTS.getInstance().speak("亲爱的" + pushBean.getData().getNikeName() + "购买了" + goods.getText().toString());
         mHandler.removeCallbacks(hintInfoRunnable);
         mHandler.postDelayed(hintInfoRunnable, SHOW_INFO_DELAY_MILLIS * 4);
     }
@@ -633,12 +635,14 @@ public class EasyVideoPlayer extends FrameLayout
 
     public void showOtherInfo(final CharSequence message) {
         if (AppUtils.isMainThread()) {
+            BaiduTTS.getInstance().speak((String) message);
             mShowInfo.append(message);
         } else {
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
                     mShowInfo.append(message);
+                    BaiduTTS.getInstance().speak((String) message);
                 }
             });
         }
@@ -650,7 +654,9 @@ public class EasyVideoPlayer extends FrameLayout
      * @param queue
      */
     public void showNextOrder(Queue<PushBean> queue) {
+        //清除广告
         final List info = new ArrayList();
+        info.add(" ");
         nextOrder.startWithList(info, R.anim.anim_bottom_in, R.anim.anim_top_out);
         for (int i = 0; i < queue.size(); i++) {
             final PushBean peek = queue.peek();
@@ -662,10 +668,16 @@ public class EasyVideoPlayer extends FrameLayout
                     buffer.append(peek.getData().getNikeName() + "正在排队:");
                     for (int j = 0; j < peek.getData().getOrderGoods().size(); j++) {
                         PushBean.DataBean.OrderGoodsBean orderGoodsBean = peek.getData().getOrderGoods().get(j);
-                        buffer.append(orderGoodsBean.getFunctionNumber() + ControllerRobot.getName(Integer.valueOf(orderGoodsBean.getFunctionNumber())) + " , ");
+                        buffer.append(orderGoodsBean.getCount() + ControllerRobot.getName(orderGoodsBean.getFunctionNumber(), orderGoodsBean.getGoodsNumber()) + " , ");
                     }
+                    info.remove(" ");
                     info.add(buffer.toString());
-                    nextOrder.startWithList(info, R.anim.anim_bottom_in, R.anim.anim_top_out);
+                    if (info.size() > 1) {
+                        nextOrder.startWithList(info, R.anim.anim_bottom_in, R.anim.anim_top_out);
+                    } else {
+                        nextOrder.setNotices(info);
+                        nextOrder.stopFlipping();
+                    }
                 } else {
                     mHandler.post(new Runnable() {
                         @Override
@@ -674,10 +686,16 @@ public class EasyVideoPlayer extends FrameLayout
                             buffer.append(peek.getData().getNikeName() + "正在排队:");
                             for (int j = 0; j < peek.getData().getOrderGoods().size(); j++) {
                                 PushBean.DataBean.OrderGoodsBean orderGoodsBean = peek.getData().getOrderGoods().get(j);
-                                buffer.append(orderGoodsBean.getFunctionNumber() + ControllerRobot.getName(Integer.valueOf(orderGoodsBean.getFunctionNumber())) + " , ");
+                                buffer.append(orderGoodsBean.getCount() + ControllerRobot.getName(orderGoodsBean.getFunctionNumber(), orderGoodsBean.getGoodsNumber()) + " , ");
                             }
+                            info.remove(" ");
                             info.add(buffer.toString());
-                            nextOrder.startWithList(info, R.anim.anim_bottom_in, R.anim.anim_top_out);
+                            if (info.size() > 1) {
+                                nextOrder.startWithList(info, R.anim.anim_bottom_in, R.anim.anim_top_out);
+                            } else {
+                                nextOrder.setNotices(info);
+                                nextOrder.stopFlipping();
+                            }
                         }
                     });
                 }
@@ -1021,7 +1039,7 @@ public class EasyVideoPlayer extends FrameLayout
         //Inflate show info
         mShowInfoFrame = li.inflate(R.layout.include_info, this, false);
         LayoutParams infoParams = new LayoutParams(
-            ScreenUtils.getScreenWidth() / 5, ScreenUtils.getScreenHeight() / 2);
+            ScreenUtils.getScreenWidth() / 5, ScreenUtils.getScreenHeight() / 3 * 2);
         infoParams.gravity = Gravity.RIGHT;
         addView(mShowInfoFrame, infoParams);
         mShowInfoFrame.setVisibility(View.GONE);

@@ -18,7 +18,7 @@ import static com.robot.cation.robotapplication.robot.robot.connector.Controller
 
 public class Tissue {
 
-    public static void TissueStart(int data) {
+    public static void TissueStart(int functionNumber, int goodsNumber) {
 
         byte[] head = new byte[HEAD_SIZE];
         byte[] address = new byte[ADDRESS_SIZE];
@@ -33,13 +33,13 @@ public class Tissue {
 
         address[0] = HexUtil.intToByteArray(ControllerRobot.PAPER_TOWEL_MACHINE)[3];
 
-        functionCode[0] = HexUtil.intToByteArray((int) TissueConfig.tissueConfig.get("function_code"))[3];
+        functionCode[0] = HexUtil.intToByteArray(goodsNumber)[3];
 
         byte[] data_end = HexUtil.intToByteArray(ControllerRobot.DATA_END);
         end[0] = data_end[2];
         end[1] = data_end[3];
 
-        data_byte[0] = HexUtil.intToByteArray(data)[3];
+        data_byte[0] = HexUtil.intToByteArray(functionNumber)[3];
 
         length[0] = HexUtil.intToByteArray(CRC16X25Util.concatAll(head, address, functionCode, length, data_byte, end).length)[3];
 

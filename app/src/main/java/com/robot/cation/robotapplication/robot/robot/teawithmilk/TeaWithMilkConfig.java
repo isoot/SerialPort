@@ -12,8 +12,9 @@ public class TeaWithMilkConfig {
 
     static {
         //果汁
-        teaWithMilkConfig.put("fruit_juice", 0x01);
-        //豆浆
-        teaWithMilkConfig.put("soybean_milk", 0x02);
+        teaWithMilkConfig.put(0x01, "果汁");
+        //
+        teaWithMilkConfig.put(0x02, "豆浆");
+        teaWithMilkConfig.put(0x03, "水");
     }
 }
