@@ -7,13 +7,18 @@ import com.robot.cation.robotapplication.R;
 import com.robot.cation.robotapplication.robot.BaseApplication;
 import com.robot.cation.robotapplication.robot.player.EasyVideo;
 import com.robot.cation.robotapplication.robot.player.EasyVideoPlayer;
+import com.robot.cation.robotapplication.robot.push.bean.PushBean;
 import com.robot.cation.robotapplication.robot.push.broadcast.PushCallBack;
 import com.robot.cation.robotapplication.robot.push.broadcast.PushMessageManager;
 import com.robot.cation.robotapplication.robot.utils.ScreenUtils;
 
+import java.util.Queue;
+
 public class PlayerActivity extends AppCompatActivity {
 
+    public static final int DELAY_MILLIS = 1000;
     private EasyVideoPlayer player;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,8 +30,30 @@ public class PlayerActivity extends AppCompatActivity {
         player.setCallback(new EasyVideo());
         PushMessageManager.getInstance().addCallBack(new PushCallBack() {
             @Override
-            public void push(String message) {
-                player.showOrderForm(message);
+            public void push(PushBean pushBean) {
+                player.showOrderForm(pushBean);
+            }
+
+            @Override
+            public void inProduction(String message) {
+                player.showOtherInfo(message);
+            }
+
+            @Override
+            public void complete(String message) {
+                player.showOtherInfo(message);
+                player.hintInfoDelay();
+            }
+
+            @Override
+            public void onFailed(String message) {
+                player.showOtherInfo(message);
+                player.hintInfoDelay();
+            }
+
+            @Override
+            public void nextOrder(Queue<PushBean> queue) {
+                player.showNextOrder(queue);
             }
         });
     }

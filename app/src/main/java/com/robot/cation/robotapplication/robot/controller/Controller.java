@@ -3,6 +3,8 @@ package com.robot.cation.robotapplication.robot.controller;
 
 import com.robot.cation.robotapplication.robot.BaseApplication;
 import com.robot.cation.robotapplication.robot.crc.CRC16X25Util;
+import com.robot.cation.robotapplication.robot.push.broadcast.PushCallBack;
+import com.robot.cation.robotapplication.robot.push.broadcast.PushMessageManager;
 import com.robot.cation.robotapplication.robot.utils.HexUtil;
 import com.robot.cation.robotapplication.robot.utils.LogUtils;
 
@@ -150,11 +152,17 @@ public class Controller {
      * 写数据
      *
      * @param content
+     * @param type
      */
-    public static void startWrite(final byte[] content) {
+    public static void startWrite(final byte[] content, final int type, final String string) {
         Observable.create(new ObservableOnSubscribe<Object>() {
             @Override
             public void subscribe(ObservableEmitter<Object> e) throws Exception {
+                ReceiveController.addType(type);
+                List<PushCallBack> list = PushMessageManager.getInstance().getList();
+                for (int i = 0; i < list.size(); i++) {
+                    list.get(i).inProduction(string);
+                }
                 //byte[] to_send = BytesHexStrTranslate.UTF8_GBK(content);//ff fe 02 01 0b 00 00 00 01 fe ff 0c a3
                 LogUtils.e("发送数据:" + Arrays.toString(content));
                 int real = BaseApplication.driver.WriteData(content, content.length);//写数据，第一个参数为需要发送的字节数组，第二个参数为需要发送的字节长度，返回实际发送的字节长度

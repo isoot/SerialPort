@@ -1,27 +1,20 @@
 package com.robot.cation.robotapplication.robot.push.bean;
 
-import java.util.List;
-
 /**
  * Created by THINK on 2017/12/23.
  */
 
-public class TissueBean {
-
-
-    /**
-     * nikeName : 321321
-     * orderId : 4
-     * headImg : http://
-     * orderGoods : [{"orderId":4,"goodsId":5,"goodsNumber":"01","count":1,"functionNumber":"02"}]
-     * ordreType : 1
-     */
-
+public class OrderBean {
+    //用户昵称
     private String nikeName;
+    //订单id
     private int orderId;
+    //用户头像
     private String headImg;
-    private int ordreType;
-    private List<OrderGoodsBean> orderGoods;
+    //商品集合
+    private String orderGoods;
+    //订单类型 1 为普通商品类型订单；2 充电宝订单
+    private String ordreType;
 
     public String getNikeName() {
         return nikeName;
@@ -47,20 +40,19 @@ public class TissueBean {
         this.headImg = headImg;
     }
 
-    public int getOrdreType() {
-        return ordreType;
-    }
-
-    public void setOrdreType(int ordreType) {
-        this.ordreType = ordreType;
-    }
-
-    public List<OrderGoodsBean> getOrderGoods() {
+    public String getOrderGoods() {
         return orderGoods;
     }
 
-    public void setOrderGoods(List<OrderGoodsBean> orderGoods) {
+    public void setOrderGoods(String orderGoods) {
         this.orderGoods = orderGoods;
     }
 
+    public String getOrdreType() {
+        return ordreType;
+    }
+
+    public void setOrdreType(String ordreType) {
+        this.ordreType = ordreType;
+    }
 }

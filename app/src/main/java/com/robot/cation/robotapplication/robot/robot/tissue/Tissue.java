@@ -5,8 +5,6 @@ import com.robot.cation.robotapplication.robot.crc.CRC16X25Util;
 import com.robot.cation.robotapplication.robot.robot.connector.ControllerRobot;
 import com.robot.cation.robotapplication.robot.utils.HexUtil;
 import com.robot.cation.robotapplication.robot.utils.LogUtils;
-import com.robot.cation.robotapplication.robot.utils.StringUtils;
-import com.robot.cation.robotapplication.robot.utils.ToastUtils;
 
 import java.util.Arrays;
 
@@ -20,7 +18,7 @@ import static com.robot.cation.robotapplication.robot.robot.connector.Controller
 
 public class Tissue {
 
-    public static void TissueStart(String data) {
+    public static void TissueStart(int data) {
 
         byte[] head = new byte[HEAD_SIZE];
         byte[] address = new byte[ADDRESS_SIZE];
@@ -41,11 +39,7 @@ public class Tissue {
         end[0] = data_end[2];
         end[1] = data_end[3];
 
-        if(!StringUtils.isNumeric(data)){
-            ToastUtils.showShort("请输入数字 thank you!");
-            return;
-        }
-        data_byte[0] = HexUtil.intToByteArray(Integer.parseInt(data))[3];
+        data_byte[0] = HexUtil.intToByteArray(data)[3];
 
         length[0] = HexUtil.intToByteArray(CRC16X25Util.concatAll(head, address, functionCode, length, data_byte, end).length)[3];
 
@@ -62,9 +56,8 @@ public class Tissue {
 
 //        LogUtils.w("CRC校验之后的无符号数据:" + Arrays.toString(submit));
 
-        Controller.startWrite(submit);
+        Controller.startWrite(submit, ControllerRobot.PAPER_TOWEL_MACHINE, "您的纸巾正在出货中请稍后\n");
     }
-
 
 
 }
