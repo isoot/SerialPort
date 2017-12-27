@@ -33,7 +33,7 @@ public class PushMessageManager {
     private static PushMessageManager instance;
 
     private PushMessageManager() {
-        runnable.start();
+        //Do nothing
     }
 
     public static PushMessageManager getInstance() {
@@ -55,74 +55,87 @@ public class PushMessageManager {
 
     private Queue<PushBean> queue = new LinkedList<PushBean>();
 
+    /**
+     * 是否正在执行中
+     */
+    public static boolean isExecuting = false;
 
-    private Thread runnable = new Thread() {
-        @Override
-        public void run() {
-            while (true) {
-                try {
-                    PushBean poll = queue.poll();
-                    if (poll != null) {
-                        for (int i = 0; i < list.size(); i++) {
-                            list.get(i).push(poll);
-                        }
-                        List<PushBean.DataBean.OrderGoodsBean> orderGoods = poll.getData().getOrderGoods();
-                        for (int i = 0; i < orderGoods.size(); i++) {
-                            PushBean.DataBean.OrderGoodsBean orderGoodsBean = orderGoods.get(i);
-                            switch (Integer.valueOf(orderGoodsBean.getFunctionNumber())) {
-                                case MILK_TEA_MACHINE:
-                                    //奶茶
-                                    ControllerRobot.getInstance().teaWithMilk(orderGoodsBean.getCount());
-                                    break;
-                                case PAPER_TOWEL_MACHINE:
-                                    ControllerRobot.getInstance().tissue(orderGoodsBean.getCount());
-                                    //纸巾
-                                    break;
-                                case ICE_CREAM_MACHINE:
-                                    //冰淇淋
-                                    break;
-                                case POWER_BANK:
-                                    //充电宝
-                                    break;
-                                case COFFEE_MAKER:
-                                    //咖啡
-                                    break;
-                                case ADVISEMENT_PLAYER:
-                                    //广告
-                                    break;
-                            }
-                        }
-                    } else {
-                        sleep(1000);
-                    }
-                } catch (Exception el) {
-                    List<PushCallBack> list = PushMessageManager.getInstance().getList();
+    /**
+     * 执行命令 每次调用只能执行一次
+     */
+    public void execute() {
+        if (!isExecuting) {
+            isExecuting = true;
+            try {
+                PushBean poll = queue.poll();
+                if (poll != null) {
                     for (int i = 0; i < list.size(); i++) {
-                        list.get(i).onFailed("很抱歉的通知你我们制作出现了问题，正在检查...!\n");
+                        list.get(i).push(poll);
                     }
-                    ToastUtils.showShort("订单错误，请核实你的订单信息");
-                    LogUtils.w("制作出现错误:" + el);
+                    upDataPush();
+                    List<PushBean.DataBean.OrderGoodsBean> orderGoods = poll.getData().getOrderGoods();
+                    for (int i = 0; i < orderGoods.size(); i++) {
+                        PushBean.DataBean.OrderGoodsBean orderGoodsBean = orderGoods.get(i);
+                        switch (Integer.valueOf(orderGoodsBean.getFunctionNumber())) {
+                            case MILK_TEA_MACHINE:
+                                //奶茶
+                                ControllerRobot.getInstance().teaWithMilk(orderGoodsBean.getCount());
+                                break;
+                            case PAPER_TOWEL_MACHINE:
+                                ControllerRobot.getInstance().tissue(orderGoodsBean.getCount());
+                                //纸巾
+                                break;
+                            case ICE_CREAM_MACHINE:
+                                //冰淇淋
+                                break;
+                            case POWER_BANK:
+                                //充电宝
+                                break;
+                            case COFFEE_MAKER:
+                                //咖啡
+                                break;
+                            case ADVISEMENT_PLAYER:
+                                //广告
+                                break;
+                        }
+                    }
+                } else {
+                    isExecuting = false;
                 }
-
+            } catch (Exception el) {
+                isExecuting = false;
+                List<PushCallBack> list = PushMessageManager.getInstance().getList();
+                for (int i = 0; i < list.size(); i++) {
+                    list.get(i).onFailed("很抱歉的通知你我们制作出现了问题，正在检查...!\n");
+                }
+                ToastUtils.showShort("订单错误，请核实你的订单信息");
+                LogUtils.w("制作出现错误:" + el);
             }
-        }
+        } else {
+            //正在制作中
 
-    };
+        }
+    }
 
     public void informPush(final String message) {
         PushBean pushBean = GsonUtil.toBean(message, PushBean.class);
         queue.add(pushBean);
+        execute();
+        upDataPush();
     }
 
     /**
-     * 更新数据库
+     * 等待队列提示
      */
-    private void upDataLocation(String message) {
+    private void upDataPush() {
         Observable.create(new ObservableOnSubscribe<Object>() {
             @Override
             public void subscribe(ObservableEmitter<Object> e) throws Exception {
-//                GsonUtil.toBean() 解析JSON
-//                LocalDataManipulation.getInstance().insertPlayerVideoUrl();//插入数据库
+                List<PushCallBack> list = PushMessageManager.getInstance().getList();
+                for (int i = 0; i < list.size(); i++) {
+                    list.get(i).nextOrder(queue);
+                }
+                e.onComplete();
             }
         }).subscribeOn(Schedulers.newThread())
             .observeOn(AndroidSchedulers.mainThread())

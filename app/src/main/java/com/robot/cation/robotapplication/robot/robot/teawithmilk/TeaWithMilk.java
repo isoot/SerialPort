@@ -13,7 +13,7 @@ import static com.robot.cation.robotapplication.robot.robot.connector.Controller
 import static com.robot.cation.robotapplication.robot.robot.connector.ControllerRobot.END_SIZE;
 import static com.robot.cation.robotapplication.robot.robot.connector.ControllerRobot.FUNCTION_CODE_SIZE;
 import static com.robot.cation.robotapplication.robot.robot.connector.ControllerRobot.HEAD_SIZE;
-import static com.robot.cation.robotapplication.robot.robot.connector.ControllerRobot.TISSUE_SIZE;
+import static com.robot.cation.robotapplication.robot.robot.connector.ControllerRobot.TEA_WITH_MILK;
 
 /**
  * 奶茶
@@ -28,7 +28,7 @@ public class TeaWithMilk {
         byte[] length = new byte[DATA_LENGTH];
         byte[] end = new byte[END_SIZE];
 
-        byte[] data_byte = new byte[TISSUE_SIZE];
+        byte[] data_byte = new byte[TEA_WITH_MILK];
         byte[] data_head = HexUtil.intToByteArray(ControllerRobot.DATA_HEAD);
         head[0] = data_head[2];
         head[1] = data_head[3];

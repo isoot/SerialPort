@@ -45,6 +45,7 @@ public class ControllerRobot implements Robot {
     public static final int DATA_LENGTH = 1;
     public static final int END_SIZE = 2;
     public static final int TISSUE_SIZE = 1;
+    public static final int TEA_WITH_MILK = 1;
     private static ControllerRobot instance;
 
     private ControllerRobot() {

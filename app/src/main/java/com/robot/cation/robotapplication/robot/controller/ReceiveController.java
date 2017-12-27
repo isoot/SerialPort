@@ -52,10 +52,10 @@ public class ReceiveController {
                                     //奶茶机
                                     List<PushCallBack> list = PushMessageManager.getInstance().getList();
                                     for (int i = 0; i < list.size(); i++) {
-                                        list.get(i).complete("奶茶制作完成请取走的你商品!\n");
+                                        list.get(i).complete("奶茶制作完成请取走的您商品!\n");
                                     }
                                 } else {
-
+                                    //
                                 }
                                 break;
                             case PAPER_TOWEL_MACHINE:
@@ -64,7 +64,7 @@ public class ReceiveController {
                                     list.remove(Integer.valueOf(PAPER_TOWEL_MACHINE));
                                     List<PushCallBack> list = PushMessageManager.getInstance().getList();
                                     for (int i = 0; i < list.size(); i++) {
-                                        list.get(i).complete("纸巾出货完成请取走的你商品!\n");
+                                        list.get(i).complete("纸巾出货完成请取走的您商品!\n");
                                     }
                                 } else {
 
@@ -72,20 +72,56 @@ public class ReceiveController {
                                 break;
                             case ICE_CREAM_MACHINE:
                                 //冰淇淋机
-
+                                if (list.contains(ICE_CREAM_MACHINE)) {
+                                    list.remove(Integer.valueOf(ICE_CREAM_MACHINE));
+                                    List<PushCallBack> list = PushMessageManager.getInstance().getList();
+                                    for (int i = 0; i < list.size(); i++) {
+                                        list.get(i).complete("冰淇淋制作完成请取走的您商品!\n");
+                                    }
+                                } else {
+                                    //
+                                }
                                 break;
                             case POWER_BANK:
                                 //充电宝
-
+                                if (list.contains(POWER_BANK)) {
+                                    list.remove(Integer.valueOf(POWER_BANK));
+                                    List<PushCallBack> list = PushMessageManager.getInstance().getList();
+                                    for (int i = 0; i < list.size(); i++) {
+                                        list.get(i).complete("充电宝已经弹出请取走的您商品!\n");
+                                    }
+                                } else {
+                                    //
+                                }
                                 break;
                             case ADVISEMENT_PLAYER:
                                 //广告机
-
+                                if (list.contains(ADVISEMENT_PLAYER)) {
+                                    list.remove(Integer.valueOf(ADVISEMENT_PLAYER));
+                                    List<PushCallBack> list = PushMessageManager.getInstance().getList();
+                                    for (int i = 0; i < list.size(); i++) {
+                                        list.get(i).complete("您购买的广告已经生效!\n");
+                                    }
+                                } else {
+                                    //
+                                }
                                 break;
                             case COFFEE_MAKER:
                                 //咖啡机
-
+                                if (list.contains(COFFEE_MAKER)) {
+                                    list.remove(Integer.valueOf(COFFEE_MAKER));
+                                    List<PushCallBack> list = PushMessageManager.getInstance().getList();
+                                    for (int i = 0; i < list.size(); i++) {
+                                        list.get(i).complete("咖啡制作完成请取走的您商品!\n");
+                                    }
+                                } else {
+                                    //
+                                }
                                 break;
+                        }
+                        if (list.size() == 0) {
+                            PushMessageManager.isExecuting = false;
+                            PushMessageManager.getInstance().execute();
                         }
                     }
                 }
@@ -100,5 +136,7 @@ public class ReceiveController {
         boolean offer = queue.offer(data);
     }
 
-
+    public static void clear() {
+        list.clear();
+    }
 }
