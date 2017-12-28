@@ -9,7 +9,6 @@ import java.util.List;
 public class PushBean {
 
 
-
     private int status;
     private String msg;
     private DataBean data;
@@ -98,9 +97,9 @@ public class PushBean {
         public static class OrderGoodsBean {
             private int orderId;
             private int goodsId;
-            private String goodsNumber;
+            private int goodsNumber;
             private int count;
-            private String functionNumber;
+            private int functionNumber;
 
             public int getOrderId() {
                 return orderId;
@@ -118,11 +117,11 @@ public class PushBean {
                 this.goodsId = goodsId;
             }
 
-            public String getGoodsNumber() {
+            public int getGoodsNumber() {
                 return goodsNumber;
             }
 
-            public void setGoodsNumber(String goodsNumber) {
+            public void setGoodsNumber(int goodsNumber) {
                 this.goodsNumber = goodsNumber;
             }
 
@@ -134,11 +133,11 @@ public class PushBean {
                 this.count = count;
             }
 
-            public String getFunctionNumber() {
+            public int getFunctionNumber() {
                 return functionNumber;
             }
 
-            public void setFunctionNumber(String functionNumber) {
+            public void setFunctionNumber(int functionNumber) {
                 this.functionNumber = functionNumber;
             }
         }

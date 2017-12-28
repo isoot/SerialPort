@@ -1,13 +1,5 @@
 package com.robot.cation.robotapplication.robot.robot.connector;
 
-import com.robot.cation.robotapplication.robot.robot.coffee.CoffeeConfig;
-import com.robot.cation.robotapplication.robot.robot.dressingmirror.DressingMirrorConfig;
-import com.robot.cation.robotapplication.robot.robot.icecream.IceCreamConfig;
-import com.robot.cation.robotapplication.robot.robot.led.LedConfig;
-import com.robot.cation.robotapplication.robot.robot.lottery.LotteryConfig;
-import com.robot.cation.robotapplication.robot.robot.photoprint.PhotoPrintConfig;
-import com.robot.cation.robotapplication.robot.robot.sensor.SensorConfig;
-
 /**
  * 定义功能接口
  */
@@ -18,35 +10,35 @@ public interface Robot {
      *
      * @param config 冰淇淋配置
      */
-    void iceCream(IceCreamConfig config);
+    void iceCream(String config);
 
     /**
      * 咖啡
      *
      * @param config 咖啡配置
      */
-    void coffee(CoffeeConfig config);
+    void coffee(String config);
 
     /**
      * 奶茶
-     *
-     * @param data
+     *  @param functionNumber
+     * @param goodsNumber
      */
-    void teaWithMilk(int data);
+    void teaWithMilk(int functionNumber, int goodsNumber);
 
     /**
      * 彩票
      *
      * @param config 彩票配置
      */
-    void lottery(LotteryConfig config);
+    void lottery(String config);
 
     /**
      * 照片打印
      *
      * @param config 照片打印配置
      */
-    void photoPrint(PhotoPrintConfig config);
+    void photoPrint(String config);
 
     /**
      * 共享充电宝
@@ -58,28 +50,29 @@ public interface Robot {
     /**
      * 纸巾
      *
-     * @param tissueNumber 纸巾数量
+     * @param functionNumber 纸巾数量
+     * @param goodsNumber
      */
-    void tissue(int tissueNumber);
+    void tissue(int functionNumber, int goodsNumber);
 
     /**
      * VR试衣服镜
      *
      * @param config VR试衣服镜配置
      */
-    void vrDressingMirror(DressingMirrorConfig config);
+    void vrDressingMirror(String config);
 
     /**
      * LED显示
      *
      * @param config LED显示配置
      */
-    void led(LedConfig config);
+    void led(String config);
 
     /**
      * 传感器
      *
      * @param config 传感器配置
      */
-    void sensor(SensorConfig config);
+    void sensor(String config);
 }

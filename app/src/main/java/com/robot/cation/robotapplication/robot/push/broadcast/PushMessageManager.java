@@ -79,14 +79,15 @@ public class PushMessageManager {
                         switch (Integer.valueOf(orderGoodsBean.getFunctionNumber())) {
                             case MILK_TEA_MACHINE:
                                 //奶茶
-                                ControllerRobot.getInstance().teaWithMilk(orderGoodsBean.getCount());
+                                ControllerRobot.getInstance().teaWithMilk(orderGoodsBean.getCount(), orderGoodsBean.getGoodsNumber());
                                 break;
                             case PAPER_TOWEL_MACHINE:
-                                ControllerRobot.getInstance().tissue(orderGoodsBean.getCount());
+                                ControllerRobot.getInstance().tissue(orderGoodsBean.getCount(), orderGoodsBean.getGoodsNumber());
                                 //纸巾
                                 break;
                             case ICE_CREAM_MACHINE:
                                 //冰淇淋
+//                                ControllerRobot.getInstance().iceCream(orderGoodsBean.getCount());
                                 break;
                             case POWER_BANK:
                                 //充电宝
