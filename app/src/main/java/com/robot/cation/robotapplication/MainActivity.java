@@ -15,6 +15,7 @@ import com.robot.cation.robotapplication.robot.http.CallBack;
 import com.robot.cation.robotapplication.robot.http.Repository;
 import com.robot.cation.robotapplication.robot.model.InitBean;
 import com.robot.cation.robotapplication.robot.singlechip.SingleChipReceive;
+import com.robot.cation.robotapplication.robot.utils.AppUtils;
 import com.robot.cation.robotapplication.robot.utils.DeviceUtils;
 import com.robot.cation.robotapplication.robot.utils.LogUtils;
 import com.robot.cation.robotapplication.robot.utils.SPUtils;
@@ -43,7 +44,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         sample_text = findViewById(R.id.sample_text);
-        sample_text.append("开始初始化设备 请稍等!................................................\n");
+        int versionCode = AppUtils.getAppVersionCode();
+        sample_text.append("版本" + versionCode + ":开始初始化设备 请稍等!................................................\n");
 
         //=======================baidu======================
         BaiduTTS.getInstance().initialTts(mainHandler);
@@ -56,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         if (BaseApplication.driver.UsbFeatureSupported()) {
             boolean startReceive = SingleChipReceive.startReceive(sample_text);
             if (!startReceive) {
-                //ActivityUtils.startActivity(PlayerActivity.class);
+//                ActivityUtils.startActivity(PlayerActivity.class);
                 return;
             }
         } else {

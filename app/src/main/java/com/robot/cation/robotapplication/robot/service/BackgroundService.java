@@ -9,14 +9,15 @@ import android.os.SystemClock;
 import android.support.annotation.Nullable;
 
 import com.robot.cation.robotapplication.robot.constant.TimeConstants;
-import com.robot.cation.robotapplication.robot.http.CallBack;
-import com.robot.cation.robotapplication.robot.http.Repository;
 
 /**
  * Created by THINK on 2017/12/25.
  */
 
 public class BackgroundService extends Service {
+    private static final int ON = 1;
+    private static final int OFF = 0;
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -25,29 +26,29 @@ public class BackgroundService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        upload();
+        backgroundTask();
         AlarmManager manager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        long triggerAtTime = SystemClock.elapsedRealtime() + TimeConstants.MIN;
+        long triggerAtTime = SystemClock.elapsedRealtime() + TimeConstants.HOUR;
         Intent i = new Intent(this, AlarmsReceiver.class);
         PendingIntent pi = PendingIntent.getBroadcast(this, 0, i, 0);
         manager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerAtTime, pi);
         return super.onStartCommand(intent, flags, startId);
     }
 
-    private void upload() {
 
+    /**
+     * 执行的任务列表
+     */
+    private void backgroundTask() {
+        synchronizationTime();
 
-
-        Repository.getInstance().upload(null, new CallBack() {
-            @Override
-            public void onSuccess(String body) {
-
-            }
-
-            @Override
-            public void onError(String body) {
-
-            }
-        });
     }
+
+    /**
+     * 同步时间
+     */
+    private void synchronizationTime() {
+
+    }
+
 }

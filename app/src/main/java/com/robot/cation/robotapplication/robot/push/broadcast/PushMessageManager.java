@@ -107,7 +107,8 @@ public class PushMessageManager {
                 List<PushBean.DataBean.OrderGoodsBean> orderGoods = pushBean.getData().getOrderGoods();
                 for (int j = 0; j < orderGoods.size(); j++) {
                     PushBean.DataBean.OrderGoodsBean orderGoodsBean = orderGoods.get(j);
-                    buffer.append(SingleChipTips.getBuyInfo(orderGoodsBean.getFunctionNumber(), orderGoodsBean.getGoodsNumber(), orderGoodsBean.getCount()) + "、");
+                    buffer.append(SingleChipTips.getBuyInfo(orderGoodsBean.getFunctionNumber(), orderGoodsBean.getGoodsNumber(), orderGoodsBean.getCount()
+                        , orderGoodsBean.getGoodsName()) + "、");
                 }
                 info.add(buffer.toString() + "\n");
             }

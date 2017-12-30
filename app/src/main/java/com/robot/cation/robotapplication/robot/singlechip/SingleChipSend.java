@@ -20,18 +20,21 @@ public class SingleChipSend {
     /**
      * 写数据
      *
-     * @param command       指令
-     * @param addressNumber 地址
-     * @param flowListener  流程监听
+     * @param command
+     * @param addressNumber
+     * @param functionNumber
+     * @param goodsName
+     * @param flowListener
      */
-    public static void sendSingleChip(final byte[] command, final int addressNumber, final int functionNumber, final FlowListener flowListener) {
+    public static void sendSingleChip(final byte[] command, final int addressNumber, final int functionNumber, final String goodsName
+        , final FlowListener flowListener) {
         Observable.create(new ObservableOnSubscribe<Object>() {
             @Override
             public void subscribe(ObservableEmitter<Object> e) throws Exception {
-                flowListener.sendCommand(Arrays.asList(addressNumber), Arrays.asList(SingleChipTips.getInterfaceStartTips(addressNumber, functionNumber)));
+                flowListener.sendCommand(Arrays.asList(addressNumber), Arrays.asList(SingleChipTips.getInterfaceStartTips(addressNumber, functionNumber, goodsName)));
                 int real = BaseApplication.driver.WriteData(command, command.length);//写数据，第一个参数为需要发送的字节数组，第二个参数为需要发送的字节长度，返回实际发送的字节长度
                 if (real <= 0) {
-                    flowListener.onFailed(Arrays.asList(functionNumber), Arrays.asList(SingleChipTips.getFailedTips(addressNumber, functionNumber)));
+                    flowListener.onFailed(Arrays.asList(functionNumber), Arrays.asList(SingleChipTips.getFailedTips(addressNumber, functionNumber, goodsName)));
                 }
                 e.onComplete();
             }
@@ -59,7 +62,8 @@ public class SingleChipSend {
                 int real = BaseApplication.driver.WriteData(command, command.length);
                 //写数据，第一个参数为需要发送的字节数组，第二个参数为需要发送的字节长度，返回实际发送的字节长度
                 if (real <= 0) {
-                    flowListener.onFailed(Arrays.asList(functionNumber), Arrays.asList(SingleChipTips.getFailedTips(SingleChipReceive.orderGoodsBean.getFunctionNumber(), SingleChipReceive.orderGoodsBean.getGoodsNumber())));
+                    flowListener.onFailed(Arrays.asList(functionNumber), Arrays.asList(SingleChipTips.getFailedTips(SingleChipReceive.orderGoodsBean.getFunctionNumber()
+                        , SingleChipReceive.orderGoodsBean.getGoodsNumber(), SingleChipReceive.orderGoodsBean.getGoodsName())));
                 }
                 e.onComplete();
             }

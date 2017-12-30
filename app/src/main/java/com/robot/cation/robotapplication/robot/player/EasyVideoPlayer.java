@@ -620,7 +620,8 @@ public class EasyVideoPlayer extends FrameLayout
         goods.setText("");
         for (int i = 0; i < orderGoods.size(); i++) {
             PushBean.DataBean.OrderGoodsBean orderGoodsBean = orderGoods.get(i);
-            goods.append(SingleChipTips.getBuyInfo(orderGoodsBean.getFunctionNumber(), orderGoodsBean.getGoodsNumber(), orderGoodsBean.getCount()));
+            goods.append(SingleChipTips.getBuyInfo(orderGoodsBean.getFunctionNumber(), orderGoodsBean.getGoodsNumber(), orderGoodsBean.getCount()
+                , orderGoodsBean.getGoodsName()));
         }
 
         BaiduTTS.getInstance().speak("亲爱的" + pushBean.getData().getNikeName() + "购买了" + goods.getText().toString());

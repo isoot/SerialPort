@@ -16,15 +16,6 @@ import static com.robot.cation.robotapplication.robot.singlechip.SingleChipType.
  */
 public class SingleChipTips {
 
-    //奶茶配置
-    public static Map teaWithMilkConfig = new HashMap();
-
-    //奶茶提示配置
-    public static Map teaWithMilkTips = new HashMap();
-
-    //奶茶提示配置
-    public static Map teaWithMilkFailedTips = new HashMap();
-
     //充电宝配置
     public static Map sharedChargingPointConfig = new HashMap();
 
@@ -68,24 +59,6 @@ public class SingleChipTips {
         sharedChargingPointFailedTips.put(0x02, "您的TYPE-C数据线出货失败");
         sharedChargingPointFailedTips.put(0x03, "您的安卓数据线出货失败");
         sharedChargingPointFailedTips.put(0x04, "您的苹果数据线出货失败");
-    }
-
-    static {
-        teaWithMilkConfig.put(0x01, "果汁");
-        teaWithMilkConfig.put(0x02, "豆浆");
-        teaWithMilkConfig.put(0x03, "水");
-    }
-
-    static {
-        teaWithMilkTips.put(0x01, "您的奶茶(" + teaWithMilkConfig.get(0x01) + ")正在制作中请稍后!");
-        teaWithMilkTips.put(0x02, "您的奶茶(" + teaWithMilkConfig.get(0x02) + ")正在制作中请稍后!");
-        teaWithMilkTips.put(0x03, "您的奶茶(" + teaWithMilkConfig.get(0x03) + ")正在制作中请稍后!");
-    }
-
-    static {
-        teaWithMilkFailedTips.put(0x01, "您的奶茶(" + teaWithMilkConfig.get(0x01) + ")制作失败");
-        teaWithMilkFailedTips.put(0x02, "您的奶茶(" + teaWithMilkConfig.get(0x02) + ")制作失败");
-        teaWithMilkFailedTips.put(0x03, "您的奶茶(" + teaWithMilkConfig.get(0x03) + ")制作失败");
     }
 
     public static final String MECHANICAL_ARM = "机械臂";
@@ -203,20 +176,21 @@ public class SingleChipTips {
      * @param functionNumber 功能
      * @return
      */
-    public static String getInterfaceStartTips(int addressNumber, int functionNumber) {
+    public static String getInterfaceStartTips(int addressNumber, int functionNumber, String goodsName) {
         String tips = "";
         if (addressNumber == TEA_WITH_MILK.getValue()) {
-            tips = (String) teaWithMilkTips.get(functionNumber);
+            tips = "您的奶茶(" + goodsName + ")正在出货中请稍后!";
         } else if (addressNumber == TISSUE.getValue()) {
-            tips = "您的纸巾正在出货中请稍后!";
+            tips = "您的" + goodsName + "正在出货中请稍后!";
         } else if (addressNumber == ICE_CREAM.getValue()) {
-            tips = "您的冰淇淋正在制作中请稍后!";
+            tips = "您的" + goodsName + "正在制作中请稍后!";
         } else if (addressNumber == POWER_BANK.getValue()) {
-            tips = (String) sharedChargingPointTips.get(functionNumber);
+//            tips = (String) sharedChargingPointTips.get(functionNumber);
+            tips = "您的" + goodsName + "正在出货中请稍后!";
         } else if (addressNumber == ADVERTISING.getValue()) {
             tips = "您的广告正在生效中请稍后!";
         } else if (addressNumber == COFFEE.getValue()) {
-            tips = "您的咖啡正在制作中请稍后!";
+            tips = "您的" + goodsName + "正在制作中请稍后!";
         }
         return tips;
     }
@@ -229,38 +203,39 @@ public class SingleChipTips {
      * @param count          个数
      * @return
      */
-    public static String getBuyInfo(int addressNumber, int functionNumber, int count) {
+    public static String getBuyInfo(int addressNumber, int functionNumber, int count, String goodsName) {
         String tips = "";
         if (addressNumber == TEA_WITH_MILK.getValue()) {
-            tips = count + "杯奶茶(" + teaWithMilkConfig.get(functionNumber) + ")";
+            tips = count + "杯奶茶(" + goodsName + ")";
         } else if (addressNumber == TISSUE.getValue()) {
-            tips = count + "个纸巾";
+            tips = count + "个" + goodsName;
         } else if (addressNumber == ICE_CREAM.getValue()) {
-            tips = count + "杯冰淇淋";
+            tips = count + "杯" + goodsName;
         } else if (addressNumber == POWER_BANK.getValue()) {
+//            tips = count + (String) sharedChargingPointConfig.get(functionNumber);
             tips = count + (String) sharedChargingPointConfig.get(functionNumber);
         } else if (addressNumber == ADVERTISING.getValue()) {
             tips = count + "条广告";
         } else if (addressNumber == COFFEE.getValue()) {
-            tips = count + "杯咖啡";
+            tips = count + "杯" + goodsName;
         }
         return tips;
     }
 
-    public static String getFailedTips(int addressNumber, int functionNumber) {
+    public static String getFailedTips(int addressNumber, int functionNumber, String goodsName) {
         String tips = "";
         if (addressNumber == TEA_WITH_MILK.getValue()) {
-            tips = (String) teaWithMilkFailedTips.get(functionNumber);
+            tips = "您的奶茶(" + goodsName + ")制作失败";
         } else if (addressNumber == TISSUE.getValue()) {
-            tips = "您的纸巾出货失败";
+            tips = "您的" + goodsName + "出货失败";
         } else if (addressNumber == ICE_CREAM.getValue()) {
-            tips = "您的冰淇淋制作失败";
+            tips = "您的" + goodsName + "制作失败";
         } else if (addressNumber == POWER_BANK.getValue()) {
             tips = (String) sharedChargingPointFailedTips.get(functionNumber);
         } else if (addressNumber == ADVERTISING.getValue()) {
             tips = "您的广告生效失败";
         } else if (addressNumber == COFFEE.getValue()) {
-            tips = "您的咖啡制作失败";
+            tips = "您的" + goodsName + "制作失败";
         }
         return tips;
     }

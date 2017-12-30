@@ -46,13 +46,14 @@ public class FlowManager {
             PushBean.DataBean.OrderGoodsBean orderGoodsBean = orderGoods.get(i);
             int addressNumber = orderGoodsBean.getFunctionNumber();
             int functionNumber = orderGoodsBean.getGoodsNumber();
+            String goodsName = orderGoodsBean.getGoodsName();
             int dataNumber = orderGoodsBean.getCount();
             int dataByteSize = addressNumber == POWER_BANK.getValue() ? POWER_BANK_LENGTH : OTHER_LENGTH;
             //如果是纸巾 充电宝 充电线 广告 直接可以下发指令
             if (addressNumber == POWER_BANK.getValue() || addressNumber == TISSUE.getValue() || addressNumber == ADVERTISING.getValue()) {
                 //获得指令数据
                 byte[] command = Command.assembleCommand(addressNumber, functionNumber, dataNumber, dataByteSize);
-                SingleChipSend.sendSingleChip(command, addressNumber, functionNumber, flowListener);
+                SingleChipSend.sendSingleChip(command, addressNumber, functionNumber, goodsName, flowListener);
             } else {
                 oderGoods.add(orderGoodsBean);
             }
@@ -78,6 +79,7 @@ public class FlowManager {
                 int addressNumber = peek.getFunctionNumber();
                 int functionNumber = peek.getGoodsNumber();
                 int dataNumber = peek.getCount();
+                String goodsName = peek.getGoodsName();
                 dataNumber = dataNumber - 1;
                 if (dataNumber <= 0) {
                     //如果这个商品的个数为零 我们将把这个商品弹出去 不再执行这项任务
@@ -99,7 +101,7 @@ public class FlowManager {
                     byte[] command = Command.assembleCommand(ICE_CREAM.getValue(), SingleChipTips.mainpulatorConfigType.get(MECHANICAL_ARM),
                         SingleChipTips.mainpulatorConfig.get(PICK_UP_CUP), 1);
                     SingleChipSend.sendSingleChip2(command, ICE_CREAM.getValue(), SingleChipTips.mainpulatorConfigType.get(MECHANICAL_ARM), flowListener
-                        , SingleChipTips.getInterfaceStartTips(addressNumber, functionNumber));
+                        , SingleChipTips.getInterfaceStartTips(addressNumber, functionNumber, goodsName));
                 } else if (addressNumber == ICE_CREAM.getValue()) {
                     SingleChipReceive.type = ICE_CREAM.getValue();
                     SingleChipReceive.STEP = SingleChipConstant.START_ROTATING_ARM;
@@ -108,7 +110,7 @@ public class FlowManager {
                         SingleChipTips.mainpulatorConfig.get(PICK_UP_CUP), 1);
                     //发送指令
                     SingleChipSend.sendSingleChip2(command, ICE_CREAM.getValue(), SingleChipTips.mainpulatorConfigType.get(MECHANICAL_ARM), flowListener
-                        , SingleChipTips.getInterfaceStartTips(addressNumber, functionNumber));
+                        , SingleChipTips.getInterfaceStartTips(addressNumber, functionNumber, goodsName));
                 } else if (addressNumber == COFFEE.getValue()) {
                     SingleChipReceive.type = COFFEE.getValue();
                     SingleChipReceive.STEP = SingleChipConstant.START_ROTATING_ARM;
@@ -117,7 +119,7 @@ public class FlowManager {
                         SingleChipTips.mainpulatorConfig.get(PICK_UP_CUP), 1);
                     //发送指令
                     SingleChipSend.sendSingleChip2(command, ICE_CREAM.getValue(), SingleChipTips.mainpulatorConfigType.get(MECHANICAL_ARM), flowListener
-                        , SingleChipTips.getInterfaceStartTips(addressNumber, functionNumber));
+                        , SingleChipTips.getInterfaceStartTips(addressNumber, functionNumber, goodsName));
                 }
                 e.onComplete();
             }
