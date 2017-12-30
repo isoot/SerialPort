@@ -51,10 +51,10 @@ import com.danikula.videocache.HttpProxyCacheServer;
 import com.robot.cation.robotapplication.R;
 import com.robot.cation.robotapplication.robot.BaseApplication;
 import com.robot.cation.robotapplication.robot.baidu.BaiduTTS;
-import com.robot.cation.robotapplication.robot.controller.ReceiveController;
 import com.robot.cation.robotapplication.robot.push.bean.PushBean;
 import com.robot.cation.robotapplication.robot.push.broadcast.PushMessageManager;
-import com.robot.cation.robotapplication.robot.robot.connector.ControllerRobot;
+import com.robot.cation.robotapplication.robot.singlechip.SingleChipReceive;
+import com.robot.cation.robotapplication.robot.singlechip.SingleChipTips;
 import com.robot.cation.robotapplication.robot.utils.AppUtils;
 import com.robot.cation.robotapplication.robot.utils.LogUtils;
 import com.robot.cation.robotapplication.robot.utils.PlayerUtil;
@@ -66,9 +66,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
 
 /**
  * @author Aidan Follestad (afollestad)
@@ -565,7 +563,6 @@ public class EasyVideoPlayer extends FrameLayout
 
     @Override
     public void hintInfo() {
-        pushBean = null;
         PushMessageManager.getInstance().execute();
         mShowInfoFrame.animate().cancel();
         mShowInfoFrame.setAlpha(1f);
@@ -579,12 +576,13 @@ public class EasyVideoPlayer extends FrameLayout
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         if (mShowInfoFrame != null) mShowInfoFrame.setVisibility(View.INVISIBLE);
+                        PushMessageManager.isExecuting = false;
+                        SingleChipReceive.clearSingleType();
+                        PushMessageManager.getInstance().execute();
                     }
                 })
             .start();
-        PushMessageManager.isExecuting = false;
-        ReceiveController.clear();
-        PushMessageManager.getInstance().execute();
+
     }
 
     /**
@@ -605,11 +603,9 @@ public class EasyVideoPlayer extends FrameLayout
         }
     }
 
-    private PushBean pushBean;
 
     private void showInfo(PushBean pushBean) {
         //TODO
-        this.pushBean = pushBean;
         mShowInfo.setText("");
         nextOrder.removeAllViews();
         showInfo();
@@ -624,7 +620,7 @@ public class EasyVideoPlayer extends FrameLayout
         goods.setText("");
         for (int i = 0; i < orderGoods.size(); i++) {
             PushBean.DataBean.OrderGoodsBean orderGoodsBean = orderGoods.get(i);
-            goods.append(orderGoodsBean.getCount() + ControllerRobot.getName(orderGoodsBean.getFunctionNumber(), orderGoodsBean.getGoodsNumber()) + " , ");
+            goods.append(SingleChipTips.getBuyInfo(orderGoodsBean.getFunctionNumber(), orderGoodsBean.getGoodsNumber(), orderGoodsBean.getCount()));
         }
 
         BaiduTTS.getInstance().speak("亲爱的" + pushBean.getData().getNikeName() + "购买了" + goods.getText().toString());
@@ -633,16 +629,22 @@ public class EasyVideoPlayer extends FrameLayout
     }
 
 
-    public void showOtherInfo(final CharSequence message) {
+    public void showOtherInfo(final List<String> tips) {
         if (AppUtils.isMainThread()) {
-            BaiduTTS.getInstance().speak((String) message);
-            mShowInfo.append(message);
+            for (int i = 0; i < tips.size(); i++) {
+                String tipStr = tips.get(i);
+                mShowInfo.append(tipStr + "\n");
+                BaiduTTS.getInstance().speak(tipStr);
+            }
         } else {
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    mShowInfo.append(message);
-                    BaiduTTS.getInstance().speak((String) message);
+                    for (int i = 0; i < tips.size(); i++) {
+                        String tipStr = tips.get(i);
+                        mShowInfo.append(tipStr + "\n");
+                        BaiduTTS.getInstance().speak(tipStr);
+                    }
                 }
             });
         }
@@ -651,55 +653,32 @@ public class EasyVideoPlayer extends FrameLayout
     /**
      * 显示购买信息
      *
-     * @param queue
+     * @param info
      */
-    public void showNextOrder(Queue<PushBean> queue) {
-        //清除广告
-        final List info = new ArrayList();
-        info.add(" ");
+    public void showNextOrder(final List info) {
+        if (info.size() == 0) {
+            info.add(" ");
+        }
         nextOrder.startWithList(info, R.anim.anim_bottom_in, R.anim.anim_top_out);
-        for (int i = 0; i < queue.size(); i++) {
-            final PushBean peek = queue.peek();
-            if (peek == pushBean) {
-                continue;
+        if (AppUtils.isMainThread()) {
+            if (info.size() > 1) {
+                nextOrder.startWithList(info, R.anim.anim_bottom_in, R.anim.anim_top_out);
             } else {
-                if (AppUtils.isMainThread()) {
-                    StringBuffer buffer = new StringBuffer();
-                    buffer.append(peek.getData().getNikeName() + "正在排队:");
-                    for (int j = 0; j < peek.getData().getOrderGoods().size(); j++) {
-                        PushBean.DataBean.OrderGoodsBean orderGoodsBean = peek.getData().getOrderGoods().get(j);
-                        buffer.append(orderGoodsBean.getCount() + ControllerRobot.getName(orderGoodsBean.getFunctionNumber(), orderGoodsBean.getGoodsNumber()) + " , ");
-                    }
-                    info.remove(" ");
-                    info.add(buffer.toString());
+                nextOrder.setNotices(info);
+                nextOrder.stopFlipping();
+            }
+        } else {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
                     if (info.size() > 1) {
                         nextOrder.startWithList(info, R.anim.anim_bottom_in, R.anim.anim_top_out);
                     } else {
                         nextOrder.setNotices(info);
                         nextOrder.stopFlipping();
                     }
-                } else {
-                    mHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            StringBuffer buffer = new StringBuffer();
-                            buffer.append(peek.getData().getNikeName() + "正在排队:");
-                            for (int j = 0; j < peek.getData().getOrderGoods().size(); j++) {
-                                PushBean.DataBean.OrderGoodsBean orderGoodsBean = peek.getData().getOrderGoods().get(j);
-                                buffer.append(orderGoodsBean.getCount() + ControllerRobot.getName(orderGoodsBean.getFunctionNumber(), orderGoodsBean.getGoodsNumber()) + " , ");
-                            }
-                            info.remove(" ");
-                            info.add(buffer.toString());
-                            if (info.size() > 1) {
-                                nextOrder.startWithList(info, R.anim.anim_bottom_in, R.anim.anim_top_out);
-                            } else {
-                                nextOrder.setNotices(info);
-                                nextOrder.stopFlipping();
-                            }
-                        }
-                    });
                 }
-            }
+            });
         }
     }
 
@@ -1039,7 +1018,7 @@ public class EasyVideoPlayer extends FrameLayout
         //Inflate show info
         mShowInfoFrame = li.inflate(R.layout.include_info, this, false);
         LayoutParams infoParams = new LayoutParams(
-            ScreenUtils.getScreenWidth() / 5, ScreenUtils.getScreenHeight() / 3 * 2);
+            ScreenUtils.getScreenWidth() / 6, ScreenUtils.getScreenHeight() / 3 * 2);
         infoParams.gravity = Gravity.RIGHT;
         addView(mShowInfoFrame, infoParams);
         mShowInfoFrame.setVisibility(View.GONE);
@@ -1294,7 +1273,7 @@ public class EasyVideoPlayer extends FrameLayout
     private void invalidateThemeColors() {
         final int labelColor = PlayerUtil.isColorDark(mThemeColor) ? Color.WHITE : Color.BLACK;
         mControlsFrame.setBackgroundColor(PlayerUtil.adjustAlpha(mThemeColor, 0.8f));
-        mShowInfoFrame.setBackgroundColor(PlayerUtil.adjustAlpha(mThemeColor, 0.2f));
+        mShowInfoFrame.setBackgroundColor(PlayerUtil.adjustAlpha(mThemeColor, 0.4f));
         tintSelector(mBtnRestart, labelColor);
         tintSelector(mBtnPlayPause, labelColor);
         mLabelDuration.setTextColor(labelColor);

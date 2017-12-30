@@ -1,4 +1,4 @@
-package com.robot.cation.robotapplication.robot.controller;
+package com.robot.cation.robotapplication.robot.constant;
 
 
 

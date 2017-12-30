@@ -8,19 +8,11 @@ import java.util.List;
  */
 
 public class VideoUrlConstants {
-    public static final String VIDEO1 = "http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f20.mp4";
-    public static final String VIDEO2 = "http://v6c.music.126.net/20171221154402/ccbde66d672eecbb3dc08eb92c16cf22/web/cloudmusic/JGQhMSMhMTAiJjMgMDExIg==/mv/==/5319/20140428175821/2428821185777187_720.mp4";
-    public static final String VIDEO3 = "http://v4.music.126.net/20171221154441/78cebf57ef958ade5d72d5a8a296598a/web/cloudmusic/JDAzIiUyISAgNDAgIWBlIA==/mv/5398096/9f808af363efbc28fecd07c0d126cd05.mp4";
-    public static final String VIDEO4 = "http://v4.music.126.net/20171221154526/a661e4a2aded625b82955a2b76b66315/web/cloudmusic/MSIwJCAyICQxODQgISI1YQ==/mv/5533012/716bc0c889c4d5da2d7f7321049ffe04.mp4";
-    public static final String VIDEO5 = "http://www.orbbec.com.cn/tpl/simplebootx/Public/video/orb_index.mp4";
 
     public static List<String> getUrl() {
         List list = new ArrayList();
-        list.add(VIDEO5);
-        list.add(VIDEO1);
-        list.add(VIDEO2);
-        list.add(VIDEO3);
-        list.add(VIDEO4);
+        list.add("http://183.60.138.33/69745C306E44971CE34705631/03000A110059C3AAB3FF1A0000000162EBE191-5477-6B6E-823D-E53F8C91BB51.mp4?ali_redirect_domain=vali-dns.cp31.ott.cibntv.net&ccode=0502&duration=389&expire=18000&psid=e7d19bd41d7db5809ed0500bb7adde33&showid=5cec09a2972c11e6b16e&ups_client_netip=741e1feb&ups_ts=1514552800&ups_userid=1178211395&utid=xo%2ByEuiNF0wCAXQeHfw7%2B%2Ff%2B&vid=XMjcwNDg0NDI3Mg%3D%3D&vkey=Adc2b2710131e8420715d98ad6be604c1");
+
         return list;
     }
 

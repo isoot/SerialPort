@@ -108,7 +108,6 @@
             android:name=".robot.activity.PlayerActivity"
             android:configChanges="orientation|keyboardHidden|screenLayout|screenSize"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
-        <service android:name=".robot.service.LogCheckService"/>
         <service android:name=".robot.service.BackgroundService"/>
         <receiver android:name=".robot.service.AlarmsReceiver"/>
     </application>

@@ -1,24 +1,22 @@
 package com.robot.cation.robotapplication.robot.baidu;
 
 import android.os.Handler;
-import android.os.Message;
 
 import com.baidu.tts.client.SpeechSynthesizer;
 import com.baidu.tts.client.SpeechSynthesizerListener;
 import com.baidu.tts.client.TtsMode;
+import com.robot.cation.robotapplication.robot.utils.LogUtils;
 import com.robot.cation.robotapplication.robot.utils.Utils;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.robot.cation.robotapplication.robot.baidu.MainHandlerConstant.UI_CHANGE_INPUT_TEXT_SELECTION;
-import static com.robot.cation.robotapplication.robot.baidu.MainHandlerConstant.UI_CHANGE_SYNTHES_TEXT_SELECTION;
 import static com.robot.cation.robotapplication.robot.baidu.OfflineResource.VOICE_MALE;
 
-/**
- * Created by THINK on 2017/12/27.
- */
 
+/**
+ * 百度语音控制
+ */
 public class BaiduTTS {
     protected String appId = "10592204";
 
@@ -43,27 +41,9 @@ public class BaiduTTS {
         return instance;
     }
 
-    private BaiduTTS(){
-        initialTts();
+    private BaiduTTS() {
+        //
     }
-    protected Handler mainHandler = new Handler() {
-        /*
-         * @param msg
-         */
-        @Override
-        public void handleMessage(Message msg) {
-            int what = msg.what;
-            switch (what) {
-                case UI_CHANGE_INPUT_TEXT_SELECTION:
-
-                    break;
-                case UI_CHANGE_SYNTHES_TEXT_SELECTION:
-
-                    break;
-            }
-        }
-
-    };
 
     /**
      * 初始化引擎，需要的参数均在InitConfig类里
@@ -73,7 +53,7 @@ public class BaiduTTS {
      * UiMessageListener 在MessageListener的基础上，对handler发送消息，实现UI的文字更新
      * FileSaveListener 在UiMessageListener的基础上，使用 onSynthesizeDataArrived回调，获取音频流
      */
-    protected void initialTts() {
+    public void initialTts(Handler mainHandler) {
         // 设置初始化参数
         SpeechSynthesizerListener listener = new UiMessageListener(mainHandler); // 此处可以改为 含有您业务逻辑的SpeechSynthesizerListener的实现类
 
@@ -93,10 +73,10 @@ public class BaiduTTS {
     protected Map<String, String> getParams() {
         Map<String, String> params = new HashMap<String, String>();
         // 以下参数均为选填
-        params.put(SpeechSynthesizer.PARAM_SPEAKER, "0"); // 设置在线发声音人： 0 普通女声（默认） 1 普通男声 2 特别男声 3 情感男声<度逍遥> 4 情感儿童声<度丫丫>
-        params.put(SpeechSynthesizer.PARAM_VOLUME, "5"); // 设置合成的音量，0-9 ，默认 5
+        params.put(SpeechSynthesizer.PARAM_SPEAKER, "4"); // 设置在线发声音人： 0 普通女声（默认） 1 普通男声 2 特别男声 3 情感男声<度逍遥> 4 情感儿童声<度丫丫>
+        params.put(SpeechSynthesizer.PARAM_VOLUME, "7"); // 设置合成的音量，0-9 ，默认 5
         params.put(SpeechSynthesizer.PARAM_SPEED, "5");// 设置合成的语速，0-9 ，默认 5
-        params.put(SpeechSynthesizer.PARAM_PITCH, "5");// 设置合成的语调，0-9 ，默认 5
+        params.put(SpeechSynthesizer.PARAM_PITCH, "6");// 设置合成的语调，0-9 ，默认 5
         params.put(SpeechSynthesizer.PARAM_MIX_MODE, SpeechSynthesizer.MIX_MODE_DEFAULT);         // 该参数设置为TtsMode.MIX生效。即纯在线模式不生效。
         // MIX_MODE_DEFAULT 默认 ，wifi状态下使用在线，非wifi离线。在线状态下，请求超时6s自动转离线
         // MIX_MODE_HIGH_SPEED_SYNTHESIZE_WIFI wifi状态下使用在线，非wifi离线。在线状态下， 请求超时1.2s自动转离线
@@ -111,7 +91,11 @@ public class BaiduTTS {
      * 需要合成的文本text的长度不能超过1024个GBK字节。
      */
     public void speak(String message) {
-        //需要合成的文本text的长度不能超过1024个GBK字节。
-        int result = synthesizer.speak(message);
+        try {
+            //需要合成的文本text的长度不能超过1024个GBK字节。
+            int result = synthesizer.speak(message);
+        } catch (Exception e) {
+            LogUtils.w(e);
+        }
     }
 }
