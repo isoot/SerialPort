@@ -50,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
         //=======================baidu======================
         BaiduTTS.getInstance().initialTts(mainHandler);
 
+//        SilentInstall.becomeSilentInstall(FileUtils.getBaseFileAPKPath() + "/new.apk");
+
         //========================ch34==========================================
         BaseApplication.driver = new CH34xUARTDriver(
             (UsbManager) getSystemService(Context.USB_SERVICE), getApplicationContext(),

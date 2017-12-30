@@ -26,7 +26,7 @@ public class SilentInstall {
             while ((read = errIs.read()) != -1) {
                 baos.write(read);
             }
-            baos.write(Integer.parseInt("/n"));
+            baos.write("/n".getBytes(), 0, "/n".getBytes().length);
             inIs = process.getInputStream();
             while ((read = inIs.read()) != -1) {
                 baos.write(read);

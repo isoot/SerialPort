@@ -7,16 +7,12 @@ import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.robot.cation.robotapplication.robot.constant.MemoryConstants;
-import com.robot.cation.robotapplication.robot.http.CallBack;
-import com.robot.cation.robotapplication.robot.http.remot.Remote;
 import com.robot.cation.robotapplication.robot.location.LocationOption;
-import com.robot.cation.robotapplication.robot.model.InitBean;
 import com.robot.cation.robotapplication.robot.player.BaseFileNameGenerator;
 import com.robot.cation.robotapplication.robot.utils.CrashUtils;
 import com.robot.cation.robotapplication.robot.utils.DeviceUtils;
 import com.robot.cation.robotapplication.robot.utils.FileUtils;
 import com.robot.cation.robotapplication.robot.utils.LogUtils;
-import com.robot.cation.robotapplication.robot.utils.SPUtils;
 import com.robot.cation.robotapplication.robot.utils.Utils;
 
 import java.io.File;
@@ -52,7 +48,6 @@ public class BaseApplication extends Application {
     }
 
 
-
     /**
      * 配置LOG 初始化信息
      */
@@ -67,6 +62,20 @@ public class BaseApplication extends Application {
             .setBorderSwitch(true)
             .setConsoleFilter(LogUtils.V)
             .setFileFilter(LogUtils.V);
+
+        //静默安装和自启动
+//        DownloadUtil.get().download("https://note.youdao.com/yws/api/personal/sync?method=download&fileId=WEB1d527fb5c72604b9cd228fc9311a08e7&version=2425&cstk=PcP6bZ0s&keyfrom=web"
+//            , FileUtils.getBaseFileAPKPath(), new DownloadUtil.OnDownloadListener() {
+//            @Override
+//            public void onDownloadSuccess(String filePath) {
+//                //
+//                 SilentInstall.becomeSilentInstall(filePath);
+//            }
+//
+//            @Override
+//            public void onDownloadFailed() {
+//            }
+//        });
     }
 
 
