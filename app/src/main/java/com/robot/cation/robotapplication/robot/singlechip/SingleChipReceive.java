@@ -1,10 +1,13 @@
 package com.robot.cation.robotapplication.robot.singlechip;
 
 
+import android.widget.TextView;
+
 import com.robot.cation.robotapplication.robot.BaseApplication;
-import com.robot.cation.robotapplication.robot.controller.ComConfig;
+import com.robot.cation.robotapplication.robot.constant.ComConfig;
+import com.robot.cation.robotapplication.robot.constant.SingleChipConstant;
 import com.robot.cation.robotapplication.robot.crc.CRC16X25Util;
-import com.robot.cation.robotapplication.robot.push.broadcast.PushCallBack;
+import com.robot.cation.robotapplication.robot.push.bean.PushBean;
 import com.robot.cation.robotapplication.robot.push.broadcast.PushMessageManager;
 import com.robot.cation.robotapplication.robot.utils.HexUtil;
 import com.robot.cation.robotapplication.robot.utils.LogUtils;
@@ -12,9 +15,7 @@ import com.robot.cation.robotapplication.robot.utils.LogUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -27,9 +28,27 @@ import static com.robot.cation.robotapplication.robot.constant.SingleChipConstan
 import static com.robot.cation.robotapplication.robot.constant.SingleChipConstant.END_SIZE;
 import static com.robot.cation.robotapplication.robot.constant.SingleChipConstant.FUNCTION_CODE_SIZE;
 import static com.robot.cation.robotapplication.robot.constant.SingleChipConstant.HEAD_SIZE;
-import static com.robot.cation.robotapplication.robot.robot.connector.ControllerRobot.MILK_TEA_MACHINE;
+import static com.robot.cation.robotapplication.robot.constant.SingleChipConstant.START_CLOSE_GATE;
+import static com.robot.cation.robotapplication.robot.constant.SingleChipConstant.START_OPEN_GATE;
+import static com.robot.cation.robotapplication.robot.constant.SingleChipConstant.START_PRODUCE;
+import static com.robot.cation.robotapplication.robot.constant.SingleChipConstant.START_PRODUCE_END;
+import static com.robot.cation.robotapplication.robot.constant.SingleChipConstant.START_ROTATING_ARM_DESTINATION;
+import static com.robot.cation.robotapplication.robot.constant.SingleChipConstant.START_ROTATING_ARM_GATE;
+import static com.robot.cation.robotapplication.robot.constant.SingleChipConstant.START_USER_TAKES;
+import static com.robot.cation.robotapplication.robot.singlechip.SingleChipTips.CHOCOLATE_POSITION;
+import static com.robot.cation.robotapplication.robot.singlechip.SingleChipTips.CLOSE_DOOR;
+import static com.robot.cation.robotapplication.robot.singlechip.SingleChipTips.ELECTRICALLY_OPERATED_GATE_;
+import static com.robot.cation.robotapplication.robot.singlechip.SingleChipTips.FLOW_ONE;
+import static com.robot.cation.robotapplication.robot.singlechip.SingleChipTips.FOLLING_CUP_MACHINE;
+import static com.robot.cation.robotapplication.robot.singlechip.SingleChipTips.GATE_LOCATION;
+import static com.robot.cation.robotapplication.robot.singlechip.SingleChipTips.ICE_CREAM_POSITION;
+import static com.robot.cation.robotapplication.robot.singlechip.SingleChipTips.MECHANICAL_ARM;
+import static com.robot.cation.robotapplication.robot.singlechip.SingleChipTips.MILK_TEA_POSITION;
+import static com.robot.cation.robotapplication.robot.singlechip.SingleChipTips.OPEN_DOOR;
+import static com.robot.cation.robotapplication.robot.singlechip.SingleChipTips.RESTORATION;
 import static com.robot.cation.robotapplication.robot.singlechip.SingleChipType.ADVERTISING;
 import static com.robot.cation.robotapplication.robot.singlechip.SingleChipType.COFFEE;
+import static com.robot.cation.robotapplication.robot.singlechip.SingleChipType.ELECTRICALLY_OPERATED_GATE;
 import static com.robot.cation.robotapplication.robot.singlechip.SingleChipType.ICE_CREAM;
 import static com.robot.cation.robotapplication.robot.singlechip.SingleChipType.POWER_BANK;
 import static com.robot.cation.robotapplication.robot.singlechip.SingleChipType.TEA_WITH_MILK;
@@ -60,18 +79,30 @@ public class SingleChipReceive {
     //设备否是开启
     private static boolean isOpen;
 
-    //接收到的数据会存储在这里
-    private static Queue<byte[]> queue = new LinkedList<byte[]>();
-
     //装在发出去的指令类型
-    private static List<Integer> list = Collections.synchronizedList(new ArrayList());
+    private static List<Integer> singleTypes = Collections.synchronizedList(new ArrayList());
+
+    public static PushBean pushBean;
+    //监听流程
+    private static FlowListener flowListener;
+
+    //制作的类型
+    public static int type;
+
+    public static int STEP;
+
+    public static PushBean.DataBean.OrderGoodsBean orderGoodsBean;
+
+    public static int index;
+
+    public static boolean MCOB;
 
     /**
      * 开始接收数据
      * 不需要任何参数
      */
-    public static void startReceive() {
-        setParameterApparatus(BAUD_RATE, DATA_BIT, STOP_BIT, PARITY, FLOW_CONTROL);
+    public static boolean startReceive(TextView info) {
+        return setParameterApparatus(BAUD_RATE, DATA_BIT, STOP_BIT, PARITY, FLOW_CONTROL, info);
     }
 
     /**
@@ -83,31 +114,32 @@ public class SingleChipReceive {
      * @param parity
      * @param flowControl
      */
-    private static void setParameterApparatus(int baudRate, byte dataBit, byte stopBit, byte parity, byte flowControl) {
+    private static boolean setParameterApparatus(int baudRate, byte dataBit, byte stopBit, byte parity, byte flowControl, TextView info) {
+        boolean is_ok = false;
         int rectal = BaseApplication.driver.ResumeUsbList();
         // ResumeUsbList方法用于枚举CH34X设备以及打开相关设备
         if (rectal == -1) {
-            LogUtils.w("打开设备失败!");
+            info.append("打开设备失败!\n");
         } else if (rectal == 0) {
             //对串口设备进行初始化操作
             if (!BaseApplication.driver.UartInit()) {
-                LogUtils.w("设备初始化失败!");
-                return;
+                info.append("设备初始化失败!......................................\n");
+            } else {
+                info.append("打开设备成功!\n");
+                isOpen = true;
+                //配置串口波特率
+                if (isOpen && BaseApplication.driver.SetConfig(baudRate, dataBit, stopBit, parity,
+                    flowControl)) {
+                    info.append("串口设置成功!.........................................\n");
+                } else {
+                    info.append("串口设置失败!............................................\n");
+                }
+                readSerialData();//开启读线程读取串口接收的数据
             }
-            LogUtils.w("打开设备成功!");
-            isOpen = true;
-            readSerialData();//开启读线程读取串口接收的数据
         } else {
-            LogUtils.w("未授权限 请核实");
+            info.append("没有发现设备，请检查你的设备是否正常................................\n");
         }
-
-        //配置串口波特率
-        if (isOpen && BaseApplication.driver.SetConfig(baudRate, dataBit, stopBit, parity,
-            flowControl)) {
-            LogUtils.w("串口设置成功!");
-        } else {
-            LogUtils.w("串口设置失败!");
-        }
+        return is_ok;
     }
 
     /**
@@ -155,8 +187,7 @@ public class SingleChipReceive {
             //CRC校验部分
             boolean passCRC = CRC16X25Util.isPassCRC(packageData, dataLength);
             if (passCRC) {
-                queue.add(packageData);//校验通过
-                circulationData();
+                circulationData(packageData);//校验通过
             } else {
                 LogUtils.w("校验失败数据:" + Arrays.toString(packageData));
             }
@@ -177,94 +208,206 @@ public class SingleChipReceive {
     /**
      * 处理接收到的数据
      */
-    private static void circulationData() {
-        //处理数据
-        String name = TEA_WITH_MILK.getName();
-        int value = TEA_WITH_MILK.getValue();
-        byte[] poll = queue.poll();
-        if (poll != null) {
-            byte address = poll[HEAD_SIZE];
-            if (address == TEA_WITH_MILK.getValue()) {
-                if (list.contains(MILK_TEA_MACHINE)) {
-                    list.remove(Integer.valueOf(MILK_TEA_MACHINE));
-                    List<PushCallBack> list = PushMessageManager.getInstance().getList();
-                    for (int i = 0; i < list.size(); i++) {
-                        list.get(i).complete("奶茶制作完成请取走的您商品!\n");
-                    }
-                } else {
-                    //主动发过来的数据
+    private static void circulationData(byte[] packageData) {
+        byte address = packageData[HEAD_SIZE];
+        byte functionCode = packageData[HEAD_SIZE + ADDRESS_SIZE];
+        if (address == TEA_WITH_MILK.getValue()) {
+            singleTypes.remove(Integer.valueOf(TEA_WITH_MILK.getValue()));
+            if (singleTypes.contains(TEA_WITH_MILK.getValue())) {
+                if (STEP == START_PRODUCE) {
+                    //制作完成 开始调用机械臂送到门口
+                    STEP = START_PRODUCE_END;
+                    byte[] command = Command.assembleCommand(ICE_CREAM.getValue(), SingleChipTips.mainpulatorConfigType.get(MECHANICAL_ARM),
+                        SingleChipTips.mainpulatorConfig.get(GATE_LOCATION), 1);
+                    SingleChipSend.sendSingleChip2(command, ICE_CREAM.getValue(), SingleChipTips.mainpulatorConfigType.get(MECHANICAL_ARM), flowListener
+                        , null);
                 }
-            } else if (address == TISSUE.getValue()) {
-                //纸巾机
-                if (list.contains(TISSUE.getValue())) {
-                    list.remove(Integer.valueOf(TISSUE.getValue()));
-                    List<PushCallBack> list = PushMessageManager.getInstance().getList();
-                    for (int i = 0; i < list.size(); i++) {
-                        list.get(i).complete("纸巾出货完成请取走的您商品!\n");
-                    }
-                } else {
+            } else {
+                //主动发过来的数据
+            }
+        } else if (address == TISSUE.getValue()) {
+            //纸巾机
+            if (singleTypes.contains(TISSUE.getValue())) {
+                singleTypes.remove(Integer.valueOf(TISSUE.getValue()));
+                if (flowListener != null) {
+                    flowListener.complete(Arrays.asList(TISSUE.getValue()), Arrays.asList("纸巾出货完成请取走的您商品!"));
+                }
+            } else {
 
-                }
-            } else if (address == ICE_CREAM.getValue()) {
-                //冰淇淋机
-                if (list.contains(ICE_CREAM.getValue())) {
-                    list.remove(Integer.valueOf(ICE_CREAM.getValue()));
-                    List<PushCallBack> list = PushMessageManager.getInstance().getList();
-                    for (int i = 0; i < list.size(); i++) {
-                        list.get(i).complete("冰淇淋制作完成请取走的您商品!\n");
-                    }
-                } else {
-                    //
-                }
-            } else if (address == POWER_BANK.getValue()) {
-                if (list.contains(POWER_BANK.getValue())) {
-                    list.remove(Integer.valueOf(POWER_BANK.getValue()));
-                    List<PushCallBack> list = PushMessageManager.getInstance().getList();
-                    for (int i = 0; i < list.size(); i++) {
-                        list.get(i).complete("充电宝已经弹出请取走的您商品!\n");
-                    }
-                } else {
-                    //
-                }
-            } else if (address == ADVERTISING.getValue()) {
-                if (list.contains(ADVERTISING.getValue())) {
-                    list.remove(Integer.valueOf(ADVERTISING.getValue()));
-                    List<PushCallBack> list = PushMessageManager.getInstance().getList();
-                    for (int i = 0; i < list.size(); i++) {
-                        list.get(i).complete("您购买的广告已经生效!\n");
-                    }
-                } else {
-                    //
-                }
-            } else if (address == COFFEE.getValue()) {
-                if (list.contains(COFFEE.getValue())) {
-                    list.remove(Integer.valueOf(COFFEE.getValue()));
-                    List<PushCallBack> list = PushMessageManager.getInstance().getList();
-                    for (int i = 0; i < list.size(); i++) {
-                        list.get(i).complete("咖啡制作完成请取走的您商品!\n");
+            }
+        } else if (address == ICE_CREAM.getValue()) {
+            //冰淇淋和机械臂
+            if (singleTypes.contains(ICE_CREAM.getValue())) {
+                singleTypes.remove(Integer.valueOf(ICE_CREAM.getValue()));
+                //当接收到的是机械臂数据的流程
+                if (functionCode == SingleChipTips.mainpulatorConfigType.get(MECHANICAL_ARM)) {
+                    if (STEP == SingleChipConstant.START_ROTATING_ARM) {
+                        STEP = SingleChipConstant.START_FOLLING_CUP;
+                        //如果STEP == SingleChipConstant.START_ROTATING_ARM 表示第一步接收到的数据 接下来开始发起落杯子的流程
+                        start_destination();
+                    } else if (STEP == START_ROTATING_ARM_DESTINATION) {
+                        //机械臂已经把杯子送到指定位置 接下来可以发送生成指令了
+                        STEP = START_PRODUCE;
+                        start_produce();
+                    } else if (STEP == START_PRODUCE_END) {
+                        //机械臂已经把杯子送到门口 然后机械臂复位
+                        STEP = START_ROTATING_ARM_GATE;
+                        byte[] command = Command.assembleCommand(ICE_CREAM.getValue(), SingleChipTips.mainpulatorConfigType.get(MECHANICAL_ARM),
+                            SingleChipTips.mainpulatorConfig.get(RESTORATION), 1);
+                        SingleChipSend.sendSingleChip2(command, ICE_CREAM.getValue(), SingleChipTips.mainpulatorConfigType.get(MECHANICAL_ARM), flowListener
+                            , null);
+                        //flowListener.complete(Arrays.asList(ICE_CREAM.getValue()), Arrays.asList("冰淇淋制作完成请取走的您商品!"));
+                    } else if (STEP == START_ROTATING_ARM_GATE) {
+                        //机械臂已经复位 通知开门
+                        STEP = START_OPEN_GATE;
+                        byte[] command = Command.assembleCommand(ELECTRICALLY_OPERATED_GATE.getValue(),
+                            SingleChipTips.electrically_operated_gate_fun.get(ELECTRICALLY_OPERATED_GATE_),
+                            SingleChipTips.electrically_operated_gate_data.get(OPEN_DOOR), 1);
+                        SingleChipSend.sendSingleChip2(command, ELECTRICALLY_OPERATED_GATE.getValue(),
+                            SingleChipTips.electrically_operated_gate_fun.get(ELECTRICALLY_OPERATED_GATE_), flowListener
+                            , null);
                     }
                 } else {
                     //
                 }
             }
-            if (list.size() == 0) {
-                PushMessageManager.isExecuting = false;
-                PushMessageManager.getInstance().execute();
+        } else if (address == POWER_BANK.getValue()) {
+            if (singleTypes.contains(POWER_BANK.getValue())) {
+                singleTypes.remove(Integer.valueOf(POWER_BANK.getValue()));
+                if (flowListener != null) {
+                    flowListener.complete(Arrays.asList(POWER_BANK.getValue()), Arrays.asList("充电宝已经弹出请取走的您商品!"));
+                }
+            } else {
+                //
+            }
+        } else if (address == ADVERTISING.getValue()) {
+            if (singleTypes.contains(ADVERTISING.getValue())) {
+                singleTypes.remove(Integer.valueOf(ADVERTISING.getValue()));
+                if (flowListener != null) {
+                    flowListener.complete(Arrays.asList(POWER_BANK.getValue()), Arrays.asList("您购买的广告已经生效!"));
+                }
+            } else {
+                //
+            }
+        } else if (address == COFFEE.getValue()) {
+            if (singleTypes.contains(COFFEE.getValue())) {
+                singleTypes.remove(Integer.valueOf(COFFEE.getValue()));
+                if (flowListener != null) {
+                    flowListener.complete(Arrays.asList(POWER_BANK.getValue()), Arrays.asList("咖啡制作完成请取走的您商品!"));
+                }
+            } else {
+                //
+            }
+        } else if (address == ELECTRICALLY_OPERATED_GATE.getValue()) {
+            if (singleTypes.contains(ELECTRICALLY_OPERATED_GATE.getValue())) {
+                singleTypes.remove(Integer.valueOf(ELECTRICALLY_OPERATED_GATE.getValue()));
+                if (functionCode == SingleChipTips.electrically_operated_gate_fun.get(FOLLING_CUP_MACHINE)) {
+                    if (STEP == SingleChipConstant.START_FOLLING_CUP) {
+                        //杯子已经落下
+                        STEP = START_ROTATING_ARM_DESTINATION;
+                        start_folling_cup_ed();
+                    } else if (STEP == START_OPEN_GATE) {
+                        //们已经打开通知用户取走商品
+                        STEP = START_USER_TAKES;
+                        product_end();
+                    } else if (STEP == START_USER_TAKES) {
+                        //用户取走了一杯奶茶
+                        STEP = START_CLOSE_GATE;
+                        byte[] command = Command.assembleCommand(ELECTRICALLY_OPERATED_GATE.getValue(),
+                            SingleChipTips.electrically_operated_gate_fun.get(ELECTRICALLY_OPERATED_GATE_),
+                            SingleChipTips.electrically_operated_gate_data.get(CLOSE_DOOR), 1);
+                        SingleChipSend.sendSingleChip2(command, ELECTRICALLY_OPERATED_GATE.getValue(),
+                            SingleChipTips.electrically_operated_gate_fun.get(ELECTRICALLY_OPERATED_GATE_), flowListener
+                            , null);
+                    } else if (STEP == START_CLOSE_GATE) {
+                        FlowManager.startFlow2(flowListener);
+                    }
+                }
             }
         }
+
+    }
+
+    private static void product_end() {
+        int addressNumber = orderGoodsBean.getFunctionNumber();
+        int functionNumber = orderGoodsBean.getGoodsNumber();
+        if (type == TEA_WITH_MILK.getValue()) {
+            flowListener.complete(Arrays.asList(TEA_WITH_MILK.getValue()), Arrays.asList(SingleChipTips.getEndTips(addressNumber, functionNumber)));
+        } else if (type == ICE_CREAM.getValue()) {
+            flowListener.complete(Arrays.asList(ICE_CREAM.getValue()), Arrays.asList(SingleChipTips.getEndTips(addressNumber, functionNumber)));
+        } else if (type == COFFEE.getValue()) {
+            flowListener.complete(Arrays.asList(COFFEE.getValue()), Arrays.asList(SingleChipTips.getEndTips(addressNumber, functionNumber)));
+        }
+    }
+
+    //机械臂到相应的位置准备开始出东西
+    private static void start_folling_cup_ed() {
+        if (type == TEA_WITH_MILK.getValue()) {
+            byte[] command = Command.assembleCommand(ICE_CREAM.getValue(), SingleChipTips.mainpulatorConfigType.get(MECHANICAL_ARM),
+                SingleChipTips.mainpulatorConfig.get(MILK_TEA_POSITION), 1);
+            SingleChipSend.sendSingleChip2(command, ICE_CREAM.getValue(), SingleChipTips.mainpulatorConfigType.get(MECHANICAL_ARM), flowListener
+                , null);
+        } else if (type == ICE_CREAM.getValue()) {
+            byte[] command = Command.assembleCommand(ICE_CREAM.getValue(), SingleChipTips.mainpulatorConfigType.get(MECHANICAL_ARM),
+                SingleChipTips.mainpulatorConfig.get(ICE_CREAM_POSITION), 1);
+            SingleChipSend.sendSingleChip2(command, ICE_CREAM.getValue(), SingleChipTips.mainpulatorConfigType.get(MECHANICAL_ARM), flowListener
+                , null);
+        } else if (type == COFFEE.getValue()) {
+            byte[] command = Command.assembleCommand(ICE_CREAM.getValue(), SingleChipTips.mainpulatorConfigType.get(MECHANICAL_ARM),
+                SingleChipTips.mainpulatorConfig.get(CHOCOLATE_POSITION), 1);
+            SingleChipSend.sendSingleChip2(command, ICE_CREAM.getValue(), SingleChipTips.mainpulatorConfigType.get(MECHANICAL_ARM), flowListener
+                , null);
+        }
+    }
+
+    //开始生产
+    private static void start_produce() {
+        if (type == TEA_WITH_MILK.getValue()) {
+            int addressNumber = orderGoodsBean.getFunctionNumber();
+            int functionNumber = orderGoodsBean.getGoodsNumber();
+            //开始制作奶茶
+            byte[] command = Command.assembleCommand(addressNumber, functionNumber, 1, SingleChipConstant.OTHER_LENGTH);
+            //发送指令
+            SingleChipSend.sendSingleChip2(command, addressNumber, functionNumber, flowListener, null);
+        } else if (type == ICE_CREAM.getValue()) {
+            int addressNumber = orderGoodsBean.getFunctionNumber();
+            int functionNumber = orderGoodsBean.getGoodsNumber();
+            //开始制作奶茶
+            byte[] command = Command.assembleCommand(addressNumber, functionNumber, 1, SingleChipConstant.OTHER_LENGTH);
+            //发送指令
+            SingleChipSend.sendSingleChip2(command, addressNumber, functionNumber, flowListener, null);
+        } else if (type == COFFEE.getValue()) {
+            int addressNumber = orderGoodsBean.getFunctionNumber();
+            int functionNumber = orderGoodsBean.getGoodsNumber();
+            //开始制作奶茶
+            byte[] command = Command.assembleCommand(addressNumber, functionNumber, 1, SingleChipConstant.OTHER_LENGTH);
+            //发送指令
+            SingleChipSend.sendSingleChip2(command, addressNumber, functionNumber, flowListener, null);
+        }
+    }
+
+    //开始落杯子(调用落杯器)
+    private static void start_destination() {
+        byte[] command = Command.assembleCommand(ELECTRICALLY_OPERATED_GATE.getValue(), SingleChipTips.electrically_operated_gate_fun.get(FOLLING_CUP_MACHINE),
+            SingleChipTips.folling_cup_machine_data.get(FLOW_ONE), 1);
+        SingleChipSend.sendSingleChip2(command, ELECTRICALLY_OPERATED_GATE.getValue(), SingleChipTips.electrically_operated_gate_fun.get(FOLLING_CUP_MACHINE),
+            flowListener, null);
     }
 
     /**
      * 添加数据类型处理
      */
-    public static void addDisposeSingleType(int type) {
-        list.add(type);
+
+    public static void addDisposeSingleType(List<Integer> list) {
+        flowListener = PushMessageManager.getInstance().getFlowListener();
+        singleTypes.addAll(list);
     }
 
     /**
      * 添加数据类型处理
      */
     public static void clearSingleType() {
-        list.clear();
+        flowListener = null;
+        singleTypes.clear();
     }
 }

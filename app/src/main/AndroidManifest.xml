@@ -6,6 +6,8 @@
 
     <uses-feature android:name="android.hardware.usb.host" />
 
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <!-- 这个权限用于进行网络定位 -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <!-- 这个权限用于访问GPS定位 -->
@@ -108,7 +110,6 @@
             android:name=".robot.activity.PlayerActivity"
             android:configChanges="orientation|keyboardHidden|screenLayout|screenSize"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
-        <service android:name=".robot.service.LogCheckService"/>
         <service android:name=".robot.service.BackgroundService"/>
         <receiver android:name=".robot.service.AlarmsReceiver"/>
     </application>

@@ -6,8 +6,6 @@ import android.app.Application;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
-import com.robot.cation.robotapplication.robot.baidu.BaiduTTS;
-import com.robot.cation.robotapplication.robot.controller.ReceiveController;
 import com.robot.cation.robotapplication.robot.http.locality.LocalDataManipulation;
 
 import java.lang.ref.WeakReference;
@@ -111,8 +109,6 @@ public final class Utils {
         app.registerActivityLifecycleCallbacks(mCallbacks);
         FileUtils.mkdirInit();
         LocalDataManipulation.getInstance();
-        ReceiveController.startDisposeQueue();
-        BaiduTTS.getInstance();
     }
 
     /**

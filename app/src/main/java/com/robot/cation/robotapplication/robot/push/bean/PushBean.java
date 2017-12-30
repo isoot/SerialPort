@@ -98,6 +98,7 @@ public class PushBean {
             private int orderId;
             private int goodsId;
             private int goodsNumber;
+            private String goodsName;
             private int count;
             private int functionNumber;
 
@@ -139,6 +140,14 @@ public class PushBean {
 
             public void setFunctionNumber(int functionNumber) {
                 this.functionNumber = functionNumber;
+            }
+
+            public String getGoodsName() {
+                return goodsName;
+            }
+
+            public void setGoodsName(String goodsName) {
+                this.goodsName = goodsName;
             }
         }
     }
