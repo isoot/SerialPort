@@ -54,15 +54,17 @@ public class BaiduTTS {
      * FileSaveListener 在UiMessageListener的基础上，使用 onSynthesizeDataArrived回调，获取音频流
      */
     public void initialTts(Handler mainHandler) {
-        // 设置初始化参数
-        SpeechSynthesizerListener listener = new UiMessageListener(mainHandler); // 此处可以改为 含有您业务逻辑的SpeechSynthesizerListener的实现类
+        if (synthesizer == null) {
+            // 设置初始化参数
+            SpeechSynthesizerListener listener = new UiMessageListener(mainHandler); // 此处可以改为 含有您业务逻辑的SpeechSynthesizerListener的实现类
 
-        Map<String, String> params = getParams();
+            Map<String, String> params = getParams();
 
-        // appId appKey secretKey 网站上您申请的应用获取。注意使用离线合成功能的话，需要应用中填写您app的包名。包名在build.gradle中获取。
-        InitConfig initConfig = new InitConfig(appId, appKey, secretKey, ttsMode, offlineVoice, params, listener);
+            // appId appKey secretKey 网站上您申请的应用获取。注意使用离线合成功能的话，需要应用中填写您app的包名。包名在build.gradle中获取。
+            InitConfig initConfig = new InitConfig(appId, appKey, secretKey, ttsMode, offlineVoice, params, listener);
 
-        synthesizer = new NonBlockSyntherizer(Utils.getApp().getApplicationContext(), initConfig, mainHandler); // 此处可以改为MySyntherizer 了解调用过程
+            synthesizer = new NonBlockSyntherizer(Utils.getApp().getApplicationContext(), initConfig, mainHandler); // 此处可以改为MySyntherizer 了解调用过程
+        }
     }
 
     /**
