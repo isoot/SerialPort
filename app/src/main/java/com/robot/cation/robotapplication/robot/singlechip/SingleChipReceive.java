@@ -209,6 +209,7 @@ public class SingleChipReceive {
      * 处理接收到的数据
      */
     private static void circulationData(byte[] packageData) {
+        //根据数据匹配可以做一个拦截
         byte address = packageData[HEAD_SIZE];
         byte functionCode = packageData[HEAD_SIZE + ADDRESS_SIZE];
         if (address == TEA_WITH_MILK.getValue()) {

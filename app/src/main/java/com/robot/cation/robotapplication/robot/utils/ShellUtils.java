@@ -1,6 +1,7 @@
 package com.robot.cation.robotapplication.robot.utils;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.util.List;
@@ -93,7 +94,9 @@ public final class ShellUtils {
         StringBuilder errorMsg = null;
         DataOutputStream os = null;
         try {
-            process = Runtime.getRuntime().exec(isRoot ? "su" : "sh");
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ProcessBuilder processBuilder = new ProcessBuilder(commands);
+            process = processBuilder.start();
             os = new DataOutputStream(process.getOutputStream());
             for (String command : commands) {
                 if (command == null) continue;
@@ -132,9 +135,9 @@ public final class ShellUtils {
             }
         }
         return new CommandResult(
-                result,
-                successMsg == null ? null : successMsg.toString(),
-                errorMsg == null ? null : errorMsg.toString()
+            result,
+            successMsg == null ? null : successMsg.toString(),
+            errorMsg == null ? null : errorMsg.toString()
         );
     }
 
@@ -145,7 +148,7 @@ public final class ShellUtils {
         /**
          * 结果码
          **/
-        public int    result;
+        public int result;
         /**
          * 成功信息
          **/

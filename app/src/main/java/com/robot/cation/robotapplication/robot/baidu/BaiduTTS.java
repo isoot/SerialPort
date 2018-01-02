@@ -87,6 +87,10 @@ public class BaiduTTS {
         return params;
     }
 
+    public void release() {
+        synthesizer.release();
+    }
+
     /**
      * speak 实际上是调用 synthesize后，获取音频流，然后播放。
      * 获取音频流的方式见SaveFileActivity及FileSaveListener
