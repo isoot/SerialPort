@@ -10,11 +10,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
 import com.robot.cation.robotapplication.robot.BaseApplication;
+import com.robot.cation.robotapplication.robot.activity.PlayerActivity;
 import com.robot.cation.robotapplication.robot.baidu.BaiduTTS;
 import com.robot.cation.robotapplication.robot.http.CallBack;
 import com.robot.cation.robotapplication.robot.http.Repository;
 import com.robot.cation.robotapplication.robot.model.InitBean;
 import com.robot.cation.robotapplication.robot.singlechip.SingleChipReceive;
+import com.robot.cation.robotapplication.robot.utils.ActivityUtils;
 import com.robot.cation.robotapplication.robot.utils.AppUtils;
 import com.robot.cation.robotapplication.robot.utils.DeviceUtils;
 import com.robot.cation.robotapplication.robot.utils.LogUtils;
@@ -50,7 +52,9 @@ public class MainActivity extends AppCompatActivity {
         //=======================baidu======================
         BaiduTTS.getInstance().initialTts(mainHandler);
 
-//        SilentInstall.becomeSilentInstall(FileUtils.getBaseFileAPKPath() + "/new.apk");
+        // SilentInstall.becomeSilentInstall(FileUtils.getBaseFileAPKPath() + "/new.apk");
+
+        remoteInit();
 
         //========================ch34==========================================
         BaseApplication.driver = new CH34xUARTDriver(
@@ -60,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         if (BaseApplication.driver.UsbFeatureSupported()) {
             boolean startReceive = SingleChipReceive.startReceive(sample_text);
             if (!startReceive) {
-//                ActivityUtils.startActivity(PlayerActivity.class);
+                ActivityUtils.startActivity(PlayerActivity.class);
                 return;
             }
         } else {
@@ -68,8 +72,6 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-
-        remoteInit();
     }
 
 
@@ -77,7 +79,9 @@ public class MainActivity extends AppCompatActivity {
      * 初始化
      */
     private void remoteInit() {
-        if (SPUtils.getInstance().getBoolean("installed")) {
+
+        if (true) {
+//            if (SPUtils.getInstance().getBoolean("installed")) {
             SPUtils.getInstance().put("installed", true);
             InitBean initBean = new InitBean();
             initBean.setDeviceNumber(DeviceUtils.getAndroidID());
@@ -100,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         BaseApplication.driver.CloseDevice();
+        BaiduTTS.getInstance().release();
         super.onDestroy();
     }
 
